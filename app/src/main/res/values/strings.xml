@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">AR Location-based</string>
+    <string name="geometry_edit_clear">清除</string>
+    <string name="geometry_edit_finish">跳转</string>
+</resources>
