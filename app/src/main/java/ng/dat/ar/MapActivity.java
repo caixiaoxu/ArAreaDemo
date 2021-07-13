@@ -35,6 +35,7 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
 
     private MapView mMapView;
     private AMap mAMap;
+    private ArrayList<ArrayList<LatLng>> morLatLngList = new ArrayList<>();
     private ArrayList<LatLng> mLatLngList;
     PolygonOptions polygonOptions;
     private EditText mEditText;
@@ -165,6 +166,10 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     }
 
     public void finish1(View view) {
+        if (mLatLngList.size() > 0) {
+            morLatLngList.add(mLatLngList);
+        }
+
         mLocation = mAMap.getMyLocation();
         double[] values = GPSTransformUtil.gcj02_To_Gps84(mLocation.getLatitude(), mLocation.getLongitude());
         mLocation.setLatitude(values[0]);
@@ -173,10 +178,22 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
         /*Bundle bundle = new Bundle();
         bundle.putSerializable("geometry", mLatLngList);
         bundle.putString("altitude", mEditText.getText().toString());*/
-        intent.putExtra("geometry", mLatLngList);
+        intent.putExtra("geometry", morLatLngList);
         intent.putExtra("location", mLocation);
         startActivity(intent);
         mLocation = null;
+    }
+
+    public void addRect(View view) {
+        morLatLngList.add(mLatLngList);
+        mLatLngList = new ArrayList<>();
+        if (mPolygon != null) {
+            mPolygon.remove();
+        }
+        if (polygonOptions != null) {
+            polygonOptions.getPoints().clear();
+        }
+        mAMap.invalidate();
     }
 
     /**

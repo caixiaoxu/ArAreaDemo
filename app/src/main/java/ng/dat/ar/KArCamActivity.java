@@ -33,7 +33,7 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
     private BeyondarFragment arFragmentSupport;
     private World world;
     private Location mLastLocation;
-    ArrayList<LatLng> mLatLngList;
+    ArrayList<ArrayList<LatLng>> mLatLngList;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,7 +47,7 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
     private void initData() {
 
         if (getIntent() != null) {
-            mLatLngList = (ArrayList<LatLng>) getIntent().getSerializableExtra("geometry");
+            mLatLngList = (ArrayList<ArrayList<LatLng>>) getIntent().getSerializableExtra("geometry");
             Location location = getIntent().getParcelableExtra("location");
             if (location != null) {
                 mLastLocation = location;
@@ -72,11 +72,14 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
                 R.id.ar_cam_fragment);
 
         for (int i = 0; i < mLatLngList.size(); i++) {
-            GeoObject polyGeoObj = new GeoObject(i);
-            polyGeoObj.setGeoPosition(mLatLngList.get(i).latitude, mLatLngList.get(i).longitude, 0);
-            polyGeoObj.setImageResource(R.drawable.ar_sphere_150x);
-            polyGeoObj.setName("arObj" + i);
-            world.addBeyondarObject(polyGeoObj);
+            ArrayList<LatLng> latLngs = mLatLngList.get(i);
+            for (int j = 0; j < latLngs.size(); j++) {
+                GeoObject polyGeoObj = new GeoObject(j);
+                polyGeoObj.setGeoPosition(latLngs.get(j).latitude, latLngs.get(j).longitude, 0);
+                polyGeoObj.setImageResource(R.drawable.ar_sphere_150x);
+                polyGeoObj.setName("arObj" + j);
+                world.addBeyondarObject(polyGeoObj, i, 0 == i ? 0 : 1);
+            }
         }
 
         // Send to the fragment

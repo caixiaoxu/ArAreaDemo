@@ -688,8 +688,10 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
             }
             renderBeyondarObject(gl, beyondarObject, listTexture, time);
         }
-        //创建线
-        drawLines(gl, list, time);
+        if (1 == list.getDrawType()) {
+            //创建线
+            drawLines(gl, list, time);
+        }
     }
 
     private void drawLines(GL10 gl, BeyondarObjectList list, long time) {

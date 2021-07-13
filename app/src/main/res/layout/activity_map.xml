@@ -52,5 +52,15 @@
         app:layout_constraintLeft_toRightOf="@+id/finish1"/>
 
 
+    <Button
+        android:id="@+id/more"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="addRect"
+        android:text="添加图形"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toRightOf="@+id/altitude"/>
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
