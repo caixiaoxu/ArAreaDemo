@@ -263,6 +263,11 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         return mCameraPosition;
     }
 
+    private float min = Float.MAX_VALUE;
+    private float max = Float.MIN_VALUE;
+
+    private int count = 10;
+
     public void onDrawFrame(GL10 gl) {
         if (!mRender) {
             return;
@@ -289,8 +294,69 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
 
         gl.glRotatef(rotation, 0, 0, 1);
 
-        SensorManager.remapCoordinateSystem(mRotationMatrix, SensorManager.AXIS_Y,
-                SensorManager.AXIS_MINUS_X, mRemappedRotationMatrix);
+        if (count < 0) {
+            StringBuffer sb = new StringBuffer();
+            StringBuffer sb1 = new StringBuffer();
+            for (int i = 0; i < mRemappedRotationMatrix.length; i++) {
+                sb.append(mRemappedRotationMatrix[i]).append(",");
+                sb1.append(mRotationMatrix[i]).append(",");
+            }
+            Log.e("屏幕值", "mRotationMatrix:" + sb1.toString());
+            Log.e("渲染数值", "mRemappedRotationMatrix:" + sb.toString());
+
+            Log.e("渲染最值", "mRemappedRotationMatrix0:" + mRemappedRotationMatrix[0]);
+            Log.e("渲染最值", "mRemappedRotationMatrix4:" + mRemappedRotationMatrix[4]);
+            Log.e("渲染最值", "mRemappedRotationMatrix8:" + mRemappedRotationMatrix[8]);
+
+            Log.e("渲染最值", "mRemappedRotationMatrix1:" + mRemappedRotationMatrix[1]);
+            Log.e("渲染最值", "mRemappedRotationMatrix5:" + mRemappedRotationMatrix[5]);
+            Log.e("渲染最值", "mRemappedRotationMatrix9:" + mRemappedRotationMatrix[9]);
+
+            Log.e("渲染最值", "mRemappedRotationMatrix2:" + mRemappedRotationMatrix[2]);
+            Log.e("渲染最值", "mRemappedRotationMatrix6:" + mRemappedRotationMatrix[6]);
+            Log.e("渲染最值", "mRemappedRotationMatrix10:" + mRemappedRotationMatrix[10]);
+        } else {
+            count--;
+        }
+
+        float tempMatrix[] = new float[16];
+        SensorManager.remapCoordinateSystem(mRotationMatrix, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, tempMatrix);
+
+        if (0 == mRemappedRotationMatrix[0] || Math.abs(tempMatrix[0] - mRemappedRotationMatrix[0]) > 0.05) {
+            mRemappedRotationMatrix[0] = tempMatrix[0];
+        }
+        if (0 == mRemappedRotationMatrix[1] || Math.abs(tempMatrix[1] - mRemappedRotationMatrix[1]) > 0.05) {
+            mRemappedRotationMatrix[1] = tempMatrix[1];
+        }
+        if (0 == mRemappedRotationMatrix[2] || Math.abs(tempMatrix[2] - mRemappedRotationMatrix[2]) > 0.03) {
+            mRemappedRotationMatrix[2] = tempMatrix[2];
+        }
+        mRemappedRotationMatrix[3] = tempMatrix[3];
+
+        if (0 == mRemappedRotationMatrix[4] || Math.abs(tempMatrix[4] - mRemappedRotationMatrix[4]) > 0.05) {
+            mRemappedRotationMatrix[4] = tempMatrix[4];
+        }
+        if (0 == mRemappedRotationMatrix[5] || Math.abs(tempMatrix[5] - mRemappedRotationMatrix[5]) > 0.05) {
+            mRemappedRotationMatrix[5] = tempMatrix[5];
+        }
+        if (0 == mRemappedRotationMatrix[6] || Math.abs(tempMatrix[6] - mRemappedRotationMatrix[6]) > 0.05) {
+            mRemappedRotationMatrix[6] = tempMatrix[6];
+        }
+        mRemappedRotationMatrix[7] = tempMatrix[7];
+
+        if (0 == mRemappedRotationMatrix[8] || Math.abs(tempMatrix[8] - mRemappedRotationMatrix[8]) > 0.003) {
+            mRemappedRotationMatrix[8] = tempMatrix[8];
+        }
+        if (0 == mRemappedRotationMatrix[9] || Math.abs(tempMatrix[9] - mRemappedRotationMatrix[9]) > 0.02) {
+            mRemappedRotationMatrix[9] = tempMatrix[9];
+        }
+        if (0 == mRemappedRotationMatrix[10] || Math.abs(tempMatrix[10] - mRemappedRotationMatrix[10]) > 0.02) {
+            mRemappedRotationMatrix[10] = tempMatrix[10];
+        }
+        mRemappedRotationMatrix[11] = tempMatrix[11];
+        mRemappedRotationMatrix[15] = tempMatrix[15];
+
+//        mRemappedRotationMatrix = tempMatrix;
 
         // Clear color buffer
         gl.glClear(GL10.GL_COLOR_BUFFER_BIT | GL10.GL_DEPTH_BUFFER_BIT);
@@ -451,7 +517,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         y = (float) (Distance.fastConversionGeopointsToMeters(geoObject.getLatitude()
                 - mWorld.getLatitude()) / mDistanceFactor);
 
-        Log.e("坐标", "z:" + z);
+//        Log.e("坐标", "z:" + z);
         if (mMaxDistanceSizePoints > 0 || mMinDistanceSizePoints > 0) {
             double totalDst = Distance.calculateDistance(x, y, 0, 0);
 
@@ -651,7 +717,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertex);
         //线宽
-        gl.glLineWidth(10f);
+        gl.glLineWidth(8f);
         //颜色
         gl.glColor4f(1, 0, 0, 1);
         gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);
@@ -683,7 +749,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         }
         double dst = 0;
         if (beyondarObject instanceof GeoObject) {
-            Log.e("渲染", "当前位置定位:longitude" + mWorld.getLongitude() + ",latitude" + mWorld.getLatitude());
+//            Log.e("渲染", "当前位置定位:longitude" + mWorld.getLongitude() + ",latitude" + mWorld.getLatitude());
             dst = ((GeoObject) beyondarObject).calculateDistanceMeters(mWorld.getLongitude(),
                     mWorld.getLatitude());
             convertGPStoPoint3((GeoObject) beyondarObject, beyondarObject.getPosition());

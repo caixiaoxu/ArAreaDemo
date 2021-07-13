@@ -54,8 +54,6 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
                 mLastLocation.setAltitude(2);
             }
         }
-
-
     }
 
     public static Drawable setTint(Drawable d, int color) {
@@ -66,7 +64,7 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
 
     private void Configure_AR() {
         world = new World(getApplicationContext());
-        world.setGeoPosition(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 0);
+        world.setGeoPosition(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 2);
         Log.d(TAG, "Configure_AR: LOCATION" + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
         world.setDefaultImage(R.drawable.ar_sphere_default);
 
@@ -118,6 +116,6 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
         double[] values = GPSTransformUtil.gcj02_To_Gps84(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-        world.setGeoPosition(values[0], values[1], 0);
+        world.setGeoPosition(values[0], values[1], 2);
     }
 }
