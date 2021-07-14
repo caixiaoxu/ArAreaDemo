@@ -257,9 +257,6 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         return mCameraPosition;
     }
 
-    private float min = Float.MAX_VALUE;
-    private float max = Float.MIN_VALUE;
-
 //    private int count = 10;
 
     public void onDrawFrame(GL10 gl) {
