@@ -260,7 +260,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
     private float min = Float.MAX_VALUE;
     private float max = Float.MIN_VALUE;
 
-    private int count = 10;
+//    private int count = 10;
 
     public void onDrawFrame(GL10 gl) {
         if (!mRender) {
@@ -288,30 +288,30 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
 
         gl.glRotatef(rotation, 0, 0, 1);
 
-        if (count < 0) {
-            StringBuffer sb = new StringBuffer();
-            StringBuffer sb1 = new StringBuffer();
-            for (int i = 0; i < mRemappedRotationMatrix.length; i++) {
-                sb.append(mRemappedRotationMatrix[i]).append(",");
-                sb1.append(mRotationMatrix[i]).append(",");
-            }
-            Log.e("屏幕值", "mRotationMatrix:" + sb1.toString());
-            Log.e("渲染数值", "mRemappedRotationMatrix:" + sb.toString());
-
-            Log.e("渲染最值", "mRemappedRotationMatrix0:" + mRemappedRotationMatrix[0]);
-            Log.e("渲染最值", "mRemappedRotationMatrix4:" + mRemappedRotationMatrix[4]);
-            Log.e("渲染最值", "mRemappedRotationMatrix8:" + mRemappedRotationMatrix[8]);
-
-            Log.e("渲染最值", "mRemappedRotationMatrix1:" + mRemappedRotationMatrix[1]);
-            Log.e("渲染最值", "mRemappedRotationMatrix5:" + mRemappedRotationMatrix[5]);
-            Log.e("渲染最值", "mRemappedRotationMatrix9:" + mRemappedRotationMatrix[9]);
-
-            Log.e("渲染最值", "mRemappedRotationMatrix2:" + mRemappedRotationMatrix[2]);
-            Log.e("渲染最值", "mRemappedRotationMatrix6:" + mRemappedRotationMatrix[6]);
-            Log.e("渲染最值", "mRemappedRotationMatrix10:" + mRemappedRotationMatrix[10]);
-        } else {
-            count--;
-        }
+//        if (count < 0) {
+//            StringBuffer sb = new StringBuffer();
+//            StringBuffer sb1 = new StringBuffer();
+//            for (int i = 0; i < mRemappedRotationMatrix.length; i++) {
+//                sb.append(mRemappedRotationMatrix[i]).append(",");
+//                sb1.append(mRotationMatrix[i]).append(",");
+//            }
+//            Log.e("屏幕值", "mRotationMatrix:" + sb1.toString());
+//            Log.e("渲染数值", "mRemappedRotationMatrix:" + sb.toString());
+//
+//            Log.e("渲染最值", "mRemappedRotationMatrix0:" + mRemappedRotationMatrix[0]);
+//            Log.e("渲染最值", "mRemappedRotationMatrix4:" + mRemappedRotationMatrix[4]);
+//            Log.e("渲染最值", "mRemappedRotationMatrix8:" + mRemappedRotationMatrix[8]);
+//
+//            Log.e("渲染最值", "mRemappedRotationMatrix1:" + mRemappedRotationMatrix[1]);
+//            Log.e("渲染最值", "mRemappedRotationMatrix5:" + mRemappedRotationMatrix[5]);
+//            Log.e("渲染最值", "mRemappedRotationMatrix9:" + mRemappedRotationMatrix[9]);
+//
+//            Log.e("渲染最值", "mRemappedRotationMatrix2:" + mRemappedRotationMatrix[2]);
+//            Log.e("渲染最值", "mRemappedRotationMatrix6:" + mRemappedRotationMatrix[6]);
+//            Log.e("渲染最值", "mRemappedRotationMatrix10:" + mRemappedRotationMatrix[10]);
+//        } else {
+//            count--;
+//        }
 
         float tempMatrix[] = new float[16];
         SensorManager.remapCoordinateSystem(mRotationMatrix, SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, tempMatrix);
