@@ -713,7 +713,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         gl.glLineWidth(8f);
         //颜色
         gl.glColor4f(1, 0, 0, 1);
-        gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, 4);
+        gl.glDrawArrays(GL10.GL_LINE_LOOP, 0, length);
         gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
         gl.glEnable(GL10.GL_TEXTURE_2D);
     }
