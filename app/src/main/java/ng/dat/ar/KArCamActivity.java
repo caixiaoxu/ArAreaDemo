@@ -14,10 +14,10 @@ import ng.dat.ar.helper.RealTimeLocation;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.model.LatLng;
-import com.kingo.ar.fragment.KingoArFragment;
-import com.kingo.ar.util.location.BeyondarLocationManager;
-import com.kingo.ar.world.GeoObject;
-import com.kingo.ar.world.World;
+import com.kingoit.ar.fragment.KingoArFragment;
+import com.kingoit.ar.util.location.BeyondarLocationManager;
+import com.kingoit.ar.world.GeoObject;
+import com.kingoit.ar.world.World;
 
 import java.util.ArrayList;
 
@@ -78,7 +78,7 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
                 polyGeoObj.setGeoPosition(latLngs.get(j).latitude, latLngs.get(j).longitude, 0);
                 polyGeoObj.setImageResource(R.drawable.ar_sphere_150x);
                 polyGeoObj.setName("arObj" + j);
-                world.addBeyondarObject(polyGeoObj, i, 0 == i ? 0 : 1);
+                world.addBeyondarObject(polyGeoObj, i, 1);
             }
         }
 

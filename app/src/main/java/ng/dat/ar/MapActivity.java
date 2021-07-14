@@ -145,6 +145,7 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     }
 
     public void clear(View view) {
+        morLatLngList.clear();
         mLatLngList.clear();
         if (mPolygon != null) {
             mPolygon.remove();

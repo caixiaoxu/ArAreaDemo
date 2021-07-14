@@ -71,5 +71,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.1.1'
     implementation 'com.amap.api:map2d:latest.integration'
     implementation 'com.amap.api:location:latest.integration'
-    implementation project(path: ':beyondar')
+    implementation project(path: ':kingoitar')
 }

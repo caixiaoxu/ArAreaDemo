@@ -20,12 +20,12 @@ import android.widget.TextView;
 
 import androidx.fragment.app.Fragment;
 
-import com.kingo.ar.opengl.renderer.ARRenderer.FpsUpdatable;
-import com.kingo.ar.sensor.BeyondarSensorManager;
-import com.kingo.ar.util.math.geom.Ray;
-import com.kingo.ar.view.OnClickBeyondarObjectListener;
-import com.kingo.ar.world.BeyondarObject;
-import com.kingo.ar.world.World;
+import com.kingoit.ar.opengl.renderer.ARRenderer.FpsUpdatable;
+import com.kingoit.ar.sensor.BeyondarSensorManager;
+import com.kingoit.ar.util.math.geom.Ray;
+import com.kingoit.ar.view.OnClickBeyondarObjectListener;
+import com.kingoit.ar.world.BeyondarObject;
+import com.kingoit.ar.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,8 +43,8 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
 
 /**
  * Support fragment class that displays and control the
- * {@link com.kingo.ar.view.CameraView CameraView} and the
- * {@link com.kingo.ar.view.BeyondarGLSurfaceView BeyondarGLSurfaceView}
+ * {@link com.kingoit.ar.view.CameraView CameraView} and the
+ * {@link com.kingoit.ar.view.BeyondarGLSurfaceView BeyondarGLSurfaceView}
  * . It also provide a set of utilities to control the usage of the augmented
  * reality world.
  *
@@ -124,7 +124,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
 
     /**
      * Override this method to personalize the
-     * {@link com.kingo.ar.view.BeyondarGLSurfaceView
+     * {@link com.kingoit.ar.view.BeyondarGLSurfaceView
      * BeyondarGLSurfaceView} that will be instantiated.
      *
      * @return
@@ -135,7 +135,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
 
     /**
      * Override this method to personalize the
-     * {@link com.kingo.ar.view.CameraView CameraView} that will be
+     * {@link com.kingoit.ar.view.CameraView CameraView} that will be
      * instantiated.
      *
      * @return
@@ -428,7 +428,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
     }
 
     /**
-     * When a {@link com.kingo.ar.world.GeoObject GeoObject} is rendered
+     * When a {@link com.kingoit.ar.world.GeoObject GeoObject} is rendered
      * according to its position it could look very small if it is far away. Use
      * this method to render far objects as if there were closer.<br>
      * For instance if there are objects farther than 50 meters and we want them
@@ -438,7 +438,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
      *
      * @param maxDistanceSize
      *            The top far distance (in meters) which we want to draw a
-     *            {@link com.kingo.ar.world.GeoObject GeoObject} , 0 to
+     *            {@link com.kingoit.ar.world.GeoObject GeoObject} , 0 to
      *            set again the default behavior
      */
     public void setPullCloserDistance(float maxDistanceSize) {
@@ -446,7 +446,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
     }
 
     /**
-     * Get the distance which all the {@link com.kingo.ar.world.GeoObject
+     * Get the distance which all the {@link com.kingoit.ar.world.GeoObject
      * GeoObject} will be rendered if the are farther that the returned distance.
      *
      * @return The current max distance. 0 is the default behavior.
@@ -456,7 +456,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
     }
 
     /**
-     * When a {@link com.kingo.ar.world.GeoObject GeoObject} is rendered
+     * When a {@link com.kingoit.ar.world.GeoObject GeoObject} is rendered
      * according to its position it could look very big if it is too close. Use
      * this method to render near objects as if there were farther.<br>
      * For instance if there is an object at 1 meters and we want to have
@@ -466,7 +466,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
      *
      * @param minDistanceSize
      *            The top near distance (in meters) which we want to draw a
-     *            {@link com.kingo.ar.world.GeoObject GeoObject} , 0 to
+     *            {@link com.kingoit.ar.world.GeoObject GeoObject} , 0 to
      *            set again the default behavior.
      *
      */
@@ -476,7 +476,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
 
     /**
      * Get the closest distance which all the
-     * {@link com.kingo.ar.world.GeoObject GeoObject} can be displayed.
+     * {@link com.kingoit.ar.world.GeoObject GeoObject} can be displayed.
      *
      * @return The current minimum distance. 0 is the default behavior.
      */
@@ -527,7 +527,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
      * the camera and the AR world overlapped.
      *
      * @param listener
-     *            {@link com.kingo.ar.screenshot.OnScreenshotListener
+     *            {@link com.kingoit.ar.screenshot.OnScreenshotListener
      *            OnScreenshotListener} That will be notified when the
      *            screenshot is ready.
      * @param options
@@ -542,7 +542,7 @@ public class ArFragmentSupport extends Fragment implements FpsUpdatable,OnClickL
      * the camera and the AR world overlapped.
      *
      * @param listener
-     *            {@link com.kingo.ar.screenshot.OnScreenshotListener
+     *            {@link com.kingoit.ar.screenshot.OnScreenshotListener
      *            OnScreenshotListener} That will be notified when the
      *            screenshot is ready.
      */

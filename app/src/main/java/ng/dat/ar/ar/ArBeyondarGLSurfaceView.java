@@ -25,16 +25,16 @@ import android.view.MotionEvent;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 
-import com.kingo.ar.opengl.renderer.ARRenderer;
-import com.kingo.ar.opengl.renderer.ARRenderer.FpsUpdatable;
-import com.kingo.ar.opengl.renderer.ARRenderer.GLSnapshotCallback;
-import com.kingo.ar.opengl.renderer.OnBeyondarObjectRenderedListener;
-import com.kingo.ar.opengl.util.MatrixTrackingGL;
-import com.kingo.ar.sensor.BeyondarSensorManager;
-import com.kingo.ar.util.Logger;
-import com.kingo.ar.util.math.geom.Ray;
-import com.kingo.ar.world.BeyondarObject;
-import com.kingo.ar.world.World;
+import com.kingoit.ar.opengl.renderer.ARRenderer;
+import com.kingoit.ar.opengl.renderer.ARRenderer.FpsUpdatable;
+import com.kingoit.ar.opengl.renderer.ARRenderer.GLSnapshotCallback;
+import com.kingoit.ar.opengl.renderer.OnBeyondarObjectRenderedListener;
+import com.kingoit.ar.opengl.util.MatrixTrackingGL;
+import com.kingoit.ar.sensor.BeyondarSensorManager;
+import com.kingoit.ar.util.Logger;
+import com.kingoit.ar.util.math.geom.Ray;
+import com.kingoit.ar.world.BeyondarObject;
+import com.kingoit.ar.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -262,7 +262,7 @@ public class ArBeyondarGLSurfaceView extends GLSurfaceView implements OnBeyondar
 	}
 
 	/**
-	 * When a {@link com.kingo.ar.world.GeoObject GeoObject} is rendered
+	 * When a {@link com.kingoit.ar.world.GeoObject GeoObject} is rendered
 	 * according to its position it could look very small if it is far away. Use
 	 * this method to render far objects as if there were closer.<br>
 	 * For instance if there are objects farther than 50 meters and we want them
@@ -272,7 +272,7 @@ public class ArBeyondarGLSurfaceView extends GLSurfaceView implements OnBeyondar
 	 *
 	 * @param maxDistanceSize
 	 *            The top far distance (in meters) which we want to draw a
-	 *            {@link com.kingo.ar.world.GeoObject GeoObject} , 0 to
+	 *            {@link com.kingoit.ar.world.GeoObject GeoObject} , 0 to
 	 *            set again the default behavior
 	 */
 	public void setPullCloserDistance(float maxDistanceSize) {
@@ -280,7 +280,7 @@ public class ArBeyondarGLSurfaceView extends GLSurfaceView implements OnBeyondar
 	}
 
 	/**
-	 * Get the distance which all the {@link com.kingo.ar.world.GeoObject
+	 * Get the distance which all the {@link com.kingoit.ar.world.GeoObject
 	 * GeoObject} will be rendered if the are farther that the returned distance.
 	 *
 	 * @return The current max distance. 0 is the default behavior.
@@ -290,7 +290,7 @@ public class ArBeyondarGLSurfaceView extends GLSurfaceView implements OnBeyondar
 	}
 
 	/**
-	 * When a {@link com.kingo.ar.world.GeoObject GeoObject} is rendered
+	 * When a {@link com.kingoit.ar.world.GeoObject GeoObject} is rendered
 	 * according to its position it could look very big if it is too close. Use
 	 * this method to render near objects as if there were farther.<br>
 	 * For instance if there is an object at 1 meters and we want to have
@@ -300,7 +300,7 @@ public class ArBeyondarGLSurfaceView extends GLSurfaceView implements OnBeyondar
 	 *
 	 * @param minDistanceSize
 	 *            The top near distance (in meters) which we want to draw a
-	 *            {@link com.kingo.ar.world.GeoObject GeoObject} , 0 to
+	 *            {@link com.kingoit.ar.world.GeoObject GeoObject} , 0 to
 	 *            set again the default behavior.
 	 *
 	 */
@@ -310,7 +310,7 @@ public class ArBeyondarGLSurfaceView extends GLSurfaceView implements OnBeyondar
 
 	/**
 	 * Get the closest distance which all the
-	 * {@link com.kingo.ar.world.GeoObject GeoObject} can be displayed.
+	 * {@link com.kingoit.ar.world.GeoObject GeoObject} can be displayed.
 	 *
 	 * @return The current minimum distance. 0 is the default behavior.
 	 */

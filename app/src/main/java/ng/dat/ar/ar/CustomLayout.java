@@ -26,7 +26,7 @@ import android.widget.RemoteViews.RemoteView;
 
 /**
  * Custom layout for to be able to attach a View to a
- * {@link com.kingo.ar.world.BeyondarObject BeyondarObject}
+ * {@link com.kingoit.ar.world.BeyondarObject BeyondarObject}
  * 
  * @author jpuig
  * 

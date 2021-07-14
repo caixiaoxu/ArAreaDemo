@@ -6,9 +6,9 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ListAdapter;
 
-import com.kingo.ar.fragment.KingoArFragment;
-import com.kingo.ar.util.math.geom.Point2;
-import com.kingo.ar.world.BeyondarObject;
+import com.kingoit.ar.fragment.KingoArFragment;
+import com.kingoit.ar.util.math.geom.Point2;
+import com.kingoit.ar.world.BeyondarObject;
 
 import java.util.LinkedList;
 import java.util.List;
