@@ -6,8 +6,9 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ListAdapter;
 
-import com.beyondar.android.util.math.geom.Point2;
-import com.beyondar.android.world.BeyondarObject;
+import com.kingo.ar.fragment.KingoArFragment;
+import com.kingo.ar.util.math.geom.Point2;
+import com.kingo.ar.world.BeyondarObject;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -53,7 +54,7 @@ import java.util.Queue;
  * </pre>
  *
  * Then when the adapter is ready we can set it in the
- * {@link com.beyondar.android.fragment.BeyondarFragment BeyondarFragment}:
+ * {@link KingoArFragment BeyondarFragment}:
  *
  * <code>
  * <pre>

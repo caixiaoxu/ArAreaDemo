@@ -8,7 +8,7 @@
         android:id="@+id/ar_cam_fragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:name="com.beyondar.android.fragment.BeyondarFragment">
+        android:name="com.kingo.ar.fragment.KingoArFragment">
         </fragment>
 
     <RelativeLayout

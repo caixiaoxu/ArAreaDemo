@@ -2,11 +2,11 @@ package ng.dat.ar.ar;
 
 import android.location.Location;
 
-import com.beyondar.android.plugin.BeyondarObjectPlugin;
-import com.beyondar.android.plugin.GeoObjectPlugin;
-import com.beyondar.android.util.math.Distance;
-import com.beyondar.android.world.BeyondarObject;
-import com.beyondar.android.world.GeoObject;
+import com.kingo.ar.plugin.BeyondarObjectPlugin;
+import com.kingo.ar.plugin.GeoObjectPlugin;
+import com.kingo.ar.util.math.Distance;
+import com.kingo.ar.world.BeyondarObject;
+import com.kingo.ar.world.GeoObject;
 
 import java.util.Iterator;
 

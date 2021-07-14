@@ -15,17 +15,17 @@
  */
 package ng.dat.ar.ar;
 
-import com.beyondar.android.opengl.colision.MeshCollider;
-import com.beyondar.android.opengl.colision.SquareMeshCollider;
-import com.beyondar.android.opengl.renderable.Renderable;
-import com.beyondar.android.opengl.renderable.SquareRenderable;
-import com.beyondar.android.opengl.renderer.ARRenderer;
-import com.beyondar.android.opengl.texture.Texture;
-import com.beyondar.android.plugin.BeyondarObjectPlugin;
-import com.beyondar.android.plugin.Plugable;
-import com.beyondar.android.util.cache.BitmapCache;
-import com.beyondar.android.util.math.geom.Point3;
-import com.beyondar.android.world.World;
+import com.kingo.ar.opengl.colision.MeshCollider;
+import com.kingo.ar.opengl.colision.SquareMeshCollider;
+import com.kingo.ar.opengl.renderable.Renderable;
+import com.kingo.ar.opengl.renderable.SquareRenderable;
+import com.kingo.ar.opengl.renderer.ARRenderer;
+import com.kingo.ar.opengl.texture.Texture;
+import com.kingo.ar.plugin.BeyondarObjectPlugin;
+import com.kingo.ar.plugin.Plugable;
+import com.kingo.ar.util.cache.BitmapCache;
+import com.kingo.ar.util.math.geom.Point3;
+import com.kingo.ar.world.World;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -707,7 +707,7 @@ public class BeyondarObjectMod implements Plugable<BeyondarObjectPlugin> {
 
 	/**
 	 * Get the {@link MeshCollider
-	 * MeshCollider} of the {@link com.beyondar.android.world.GeoObject GeoObject}.
+	 * MeshCollider} of the {@link com.kingo.ar.world.GeoObject GeoObject}.
 	 * 
 	 * @return Mesh collider.
 	 */

@@ -10,7 +10,7 @@ import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
-import com.beyondar.android.util.Logger;
+import com.kingo.ar.util.Logger;
 
 import java.io.IOException;
 

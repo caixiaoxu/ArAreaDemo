@@ -14,10 +14,10 @@ import ng.dat.ar.helper.RealTimeLocation;
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.model.LatLng;
-import com.beyondar.android.fragment.BeyondarFragment;
-import com.beyondar.android.util.location.BeyondarLocationManager;
-import com.beyondar.android.world.GeoObject;
-import com.beyondar.android.world.World;
+import com.kingo.ar.fragment.KingoArFragment;
+import com.kingo.ar.util.location.BeyondarLocationManager;
+import com.kingo.ar.world.GeoObject;
+import com.kingo.ar.world.World;
 
 import java.util.ArrayList;
 
@@ -30,7 +30,7 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
 
     private final static String TAG = "ArCamActivity";
 
-    private BeyondarFragment arFragmentSupport;
+    private KingoArFragment arFragmentSupport;
     private World world;
     private Location mLastLocation;
     ArrayList<ArrayList<LatLng>> mLatLngList;
@@ -68,7 +68,7 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
         Log.d(TAG, "Configure_AR: LOCATION" + mLastLocation.getLatitude() + " " + mLastLocation.getLongitude());
         world.setDefaultImage(R.drawable.ar_sphere_default);
 
-        arFragmentSupport = (BeyondarFragment) getSupportFragmentManager().findFragmentById(
+        arFragmentSupport = (KingoArFragment) getSupportFragmentManager().findFragmentById(
                 R.id.ar_cam_fragment);
 
         for (int i = 0; i < mLatLngList.size(); i++) {
