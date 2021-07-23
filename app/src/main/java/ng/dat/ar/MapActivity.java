@@ -1,5 +1,6 @@
 package ng.dat.ar;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.location.Location;
@@ -8,6 +9,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.amap.api.location.AMapLocation;
@@ -26,12 +28,15 @@ import com.amap.api.maps2d.model.Polygon;
 import com.amap.api.maps2d.model.PolygonOptions;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ng.dat.ar.helper.GPSTransformUtil;
 import ng.dat.ar.helper.RealTimeLocation;
+import pub.devrel.easypermissions.EasyPermissions;
+import pub.devrel.easypermissions.PermissionRequest;
 
 public class MapActivity extends AppCompatActivity implements LocationSource,
-        AMapLocationListener {
+        AMapLocationListener, EasyPermissions.PermissionCallbacks {
 
     private MapView mMapView;
     private AMap mAMap;
@@ -50,6 +55,15 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     private static final int FILL_COLOR = Color.argb(10, 0, 0, 180);
     private RealTimeLocation mInstance;
 
+    private static final String[] PERMISSIONS =
+            {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA,Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.CHANGE_WIFI_STATE,Manifest.permission.INTERNET,
+                    Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
+                    Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN};
+
+    private static final int PERMISSION_REQUESTCODE = 1;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,7 +72,13 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
         mEditText = findViewById(R.id.altitude);
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
+        initPermission();
         initMap();
+    }
+
+    private void initPermission() {
+        PermissionRequest.Builder builder = new PermissionRequest.Builder(this,PERMISSION_REQUESTCODE,PERMISSIONS);
+        EasyPermissions.requestPermissions(builder.build());
     }
 
     private void initMap() {
@@ -248,5 +268,15 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
             mlocationClient.onDestroy();
         }
         mlocationClient = null;
+    }
+
+    @Override
+    public void onPermissionsGranted(int i, @NonNull List<String> list) {
+
+    }
+
+    @Override
+    public void onPermissionsDenied(int i, @NonNull List<String> list) {
+
     }
 }
