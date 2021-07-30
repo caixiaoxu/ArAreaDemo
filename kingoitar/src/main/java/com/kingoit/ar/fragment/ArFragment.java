@@ -25,7 +25,6 @@ import com.kingoit.ar.sensor.BeyondarSensorManager;
 import com.kingoit.ar.util.math.geom.Ray;
 import com.kingoit.ar.view.BeyondarGLSurfaceView;
 import com.kingoit.ar.view.BeyondarViewAdapter;
-import com.kingoit.ar.view.CameraView;
 import com.kingoit.ar.view.OnClickBeyondarObjectListener;
 import com.kingoit.ar.view.OnTouchBeyondarViewListener;
 import com.kingoit.ar.world.BeyondarObject;
@@ -39,21 +38,17 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 带相机的AR展示 Fragment
- * <p>
- * Fragment class that displays and control the
- * {@link CameraView CameraView} and the
- * {@link BeyondarGLSurfaceView BeyondarGLSurfaceView}
- * . It also provide a set of utilities to control the usage of the augmented
- * reality world.
+ * 不带相机的AR展示Fragment
+ *
+ * @author zuozhijie
+ * @date 2021/7/29 20:17
  */
-public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickListener, OnTouchListener {
+public class ArFragment extends Fragment implements FpsUpdatable, OnClickListener, OnTouchListener {
 
     private static final int CORE_POOL_SIZE = 1;
     private static final int MAXIMUM_POOL_SIZE = 1;
     private static final long KEEP_ALIVE_TIME = 1000; // 1000 ms
 
-    private CameraView mBeyondarCameraView;
     private BeyondarGLSurfaceView mBeyondarGLSurface;
     private TextView mFpsTextView;
     private RelativeLayout mMainLayout;
@@ -74,8 +69,7 @@ public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickLi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBlockingQueue = new LinkedBlockingQueue<Runnable>();
-        mThreadPool = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME,
-                TimeUnit.MILLISECONDS, mBlockingQueue);
+        mThreadPool = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE_TIME, TimeUnit.MILLISECONDS, mBlockingQueue);
     }
 
     @Override
@@ -92,9 +86,6 @@ public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickLi
         mBeyondarGLSurface = createBeyondarGLSurfaceView();
         mBeyondarGLSurface.setOnTouchListener(this);
 
-        mBeyondarCameraView = createCameraView();
-
-        mMainLayout.addView(mBeyondarCameraView, params);
         mMainLayout.addView(mBeyondarGLSurface, params);
     }
 
@@ -125,26 +116,6 @@ public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickLi
     }
 
     /**
-     * Override this method to personalize the
-     * {@link CameraView CameraView} that will be
-     * instantiated.
-     *
-     * @return
-     */
-    protected CameraView createCameraView() {
-        return new CameraView(getActivity());
-    }
-
-    /**
-     * Returns the CameraView for this class instance.
-     *
-     * @return
-     */
-    public CameraView getCameraView() {
-        return mBeyondarCameraView;
-    }
-
-    /**
      * Returns the SurfaceView for this class instance.
      *
      * @return
@@ -163,7 +134,6 @@ public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickLi
     @Override
     public void onResume() {
         super.onResume();
-        mBeyondarCameraView.startPreviewCamera();
         mBeyondarGLSurface.onResume();
         BeyondarSensorManager.resume(mSensorManager);
         if (mWorld != null) {
@@ -174,7 +144,6 @@ public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickLi
     @Override
     public void onPause() {
         super.onPause();
-        mBeyondarCameraView.releaseCamera();
         mBeyondarGLSurface.onPause();
         BeyondarSensorManager.pause(mSensorManager);
         if (mWorld != null) {
@@ -230,8 +199,9 @@ public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickLi
                 public void run() {
                     final ArrayList<BeyondarObject> beyondarObjects = new ArrayList<BeyondarObject>();
                     mBeyondarGLSurface.getBeyondarObjectsOnScreenCoordinates(lastX, lastY, beyondarObjects);
-                    if (beyondarObjects.size() == 0)
+                    if (beyondarObjects.size() == 0) {
                         return;
+                    }
                     mBeyondarGLSurface.post(new Runnable() {
                         @Override
                         public void run() {
@@ -455,7 +425,7 @@ public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickLi
      * Set the distance factor for rendering all the objects. As bigger the
      * factor the closer the objects.
      *
-     * @param factor number bigger than 0.
+     * @param meters number bigger than 0.
      */
     public void setDistanceFactor(float meters) {
         mBeyondarGLSurface.setDistanceFactor(meters);
@@ -480,7 +450,7 @@ public class KingoArFragment extends Fragment implements FpsUpdatable, OnClickLi
      * @param options  Bitmap options.
      */
     public void takeScreenshot(OnScreenshotListener listener, BitmapFactory.Options options) {
-        ScreenshotHelper.takeScreenshot(getCameraView(), getGLSurfaceView(), listener, options);
+        ScreenshotHelper.takeScreenshot(null, getGLSurfaceView(), listener, options);
     }
 
     /**

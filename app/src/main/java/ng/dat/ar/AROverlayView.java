@@ -4,13 +4,10 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Path;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.graphics.Typeface;
 import android.location.Location;
 import android.opengl.Matrix;
-import android.util.Log;
 import android.view.View;
 
 import java.util.ArrayList;
@@ -38,7 +35,7 @@ public class AROverlayView extends View {
         this.context = context;
         //Demo points
         /*arPoints = new ArrayList<ARPoint>() {{
-            *//*add(new ARPoint("1", 30.275060, 119.987749, 20));
+         *//*add(new ARPoint("1", 30.275060, 119.987749, 20));
             add(new ARPoint("2", 30.273901, 119.987749, 20));
             add(new ARPoint("3", 30.273901, 119.990613, 20));
             add(new ARPoint("4", 30.275060, 119.990613, 20));*//*
@@ -65,7 +62,7 @@ public class AROverlayView extends View {
         this.invalidate();
     }
 
-    public void updateCurrentLocation(Location currentLocation){
+    public void updateCurrentLocation(Location currentLocation) {
         this.currentLocation = currentLocation;
         this.invalidate();
     }
@@ -78,10 +75,10 @@ public class AROverlayView extends View {
             return;
         }
         List<PointF> pointFList = new ArrayList<>();
-        for (int i = 0; i < arPoints.size(); i ++) {
+        for (int i = 0; i < arPoints.size(); i++) {
             float[] currentLocationInECEF = LocationHelper.WSG84toECEF(currentLocation);
             Location location = arPoints.get(i).getLocation();
-            location.setAltitude(currentLocation.getAltitude()+location.getAltitude());
+            location.setAltitude(currentLocation.getAltitude() + location.getAltitude());
             float[] pointInECEF = LocationHelper.WSG84toECEF(location);
             float[] pointInENU = LocationHelper.ECEFtoENU(currentLocation, currentLocationInECEF, pointInECEF);
 
@@ -91,20 +88,20 @@ public class AROverlayView extends View {
             // cameraCoordinateVector[2] is z, that always less than 0 to display on right position
             // if z > 0, the point will display on the opposite
             if (cameraCoordinateVector[2] < 0) {
-                float x  = (0.5f + cameraCoordinateVector[0]/cameraCoordinateVector[3]) * canvas.getWidth();
-                float y = (0.5f - cameraCoordinateVector[1]/cameraCoordinateVector[3]) * canvas.getHeight();
-                pointFList.add(new PointF(x,y));
+                float x = (0.5f + cameraCoordinateVector[0] / cameraCoordinateVector[3]) * canvas.getWidth();
+                float y = (0.5f - cameraCoordinateVector[1] / cameraCoordinateVector[3]) * canvas.getHeight();
+                pointFList.add(new PointF(x, y));
             }
         }
-        if(pointFList.isEmpty()) {
+        if (pointFList.isEmpty()) {
             return;
         }
         int length = pointFList.size();
-        for(int i= 0;i < length;i++) {
-            if(i == length -1) {
-                canvas.drawLine(pointFList.get(i).x,pointFList.get(i).y,pointFList.get(0).x,pointFList.get(0).y,paint);
+        for (int i = 0; i < length; i++) {
+            if (i == length - 1) {
+                canvas.drawLine(pointFList.get(i).x, pointFList.get(i).y, pointFList.get(0).x, pointFList.get(0).y, paint);
             } else {
-                canvas.drawLine(pointFList.get(i).x,pointFList.get(i).y,pointFList.get(i+1).x,pointFList.get(i+1).y,paint);
+                canvas.drawLine(pointFList.get(i).x, pointFList.get(i).y, pointFList.get(i + 1).x, pointFList.get(i + 1).y, paint);
             }
         }
     }
