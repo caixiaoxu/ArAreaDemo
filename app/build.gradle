@@ -79,4 +79,5 @@ dependencies {
     implementation 'com.amap.api:location:latest.integration'
     implementation project(path: ':kingoitar')
 //    implementation(name: "kingoitar-debug", ext: "aar")
+    implementation 'pub.devrel:easypermissions:3.0.0'
 }
