@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import ng.dat.ar.GeoRectifyingUtil;
+
 /**
  * @author Xuwl
  * @date 2021/7/9
@@ -21,6 +23,8 @@ public class RealTimeLocation {
     private AMapLocationClientOption mLocationOption;
 
     private List<AMapLocationListener> listeners = new ArrayList<>();
+
+    private GeoRectifyingUtil mGeoRectifyingUtil = new GeoRectifyingUtil();
 
     private RealTimeLocation() {
     }
@@ -57,8 +61,10 @@ public class RealTimeLocation {
                                         +"时间" + df.format(new Date(aMapLocation.getTime()))//定位时间
                         );
                         //回调
-                        for (AMapLocationListener listener : listeners) {
-                            listener.onLocationChanged(aMapLocation);
+                        if ( mGeoRectifyingUtil.filterPos(aMapLocation)){
+                            for (AMapLocationListener listener : listeners) {
+                                listener.onLocationChanged(aMapLocation);
+                            }
                         }
                     } else {
                         //显示错误信息ErrCode是错误码，errInfo是错误信息，详见错误码表。

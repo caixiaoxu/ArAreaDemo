@@ -39,6 +39,7 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     private ArrayList<LatLng> mLatLngList;
     PolygonOptions polygonOptions;
     private EditText mEditText;
+    private EditText mDistance;
     private Polygon mPolygon;
 
     private OnLocationChangedListener mListener;
@@ -49,6 +50,7 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     private static final int STROKE_COLOR = Color.argb(180, 3, 145, 255);
     private static final int FILL_COLOR = Color.argb(10, 0, 0, 180);
     private RealTimeLocation mInstance;
+    private GeoRectifyingUtil mGeoRectifyingUtil = new GeoRectifyingUtil();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,7 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
         setContentView(R.layout.activity_map);
         mMapView = findViewById(R.id.mapView);
         mEditText = findViewById(R.id.altitude);
+        mDistance = findViewById(R.id.distance);
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
         mMapView.onCreate(savedInstanceState);
         initMap();
@@ -178,7 +181,9 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
         Intent intent = new Intent(this, KArCamActivity.class);
         /*Bundle bundle = new Bundle();
         bundle.putSerializable("geometry", mLatLngList);
-        bundle.putString("altitude", mEditText.getText().toString());*/
+//        bundle.putString("altitude", mEditText.getText().toString());*/
+        intent.putExtra("distance", mDistance.getText().toString());
+        intent.putExtra("altitude", mEditText.getText().toString());
         intent.putExtra("geometry", morLatLngList);
         intent.putExtra("location", mLocation);
         startActivity(intent);
@@ -203,10 +208,13 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     @Override
     public void onLocationChanged(AMapLocation amapLocation) {
         if (mListener != null && amapLocation != null) {
-            if (amapLocation != null
-                    && amapLocation.getErrorCode() == 0) {
-                mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
-                mAMap.moveCamera(CameraUpdateFactory.zoomTo(18));
+            if (amapLocation != null && amapLocation.getErrorCode() == 0) {
+                boolean isShow = mGeoRectifyingUtil.filterPos(amapLocation);
+                Log.e("定位回调", "定位成功，是否显示：" + isShow);
+                if (isShow) {
+                    mListener.onLocationChanged(amapLocation);// 显示系统小蓝点
+                    mAMap.moveCamera(CameraUpdateFactory.zoomTo(18));
+                }
             } else {
                 String errText = "定位失败," + amapLocation.getErrorCode() + ": " + amapLocation.getErrorInfo();
                 Log.e("AmapErr", errText);

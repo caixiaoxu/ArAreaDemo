@@ -58,6 +58,12 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
+//    repositories{
+//        flatDir{
+//            dirs 'libs'
+//        }
+//    }
 }
 
 dependencies {
@@ -72,4 +78,5 @@ dependencies {
     implementation 'com.amap.api:map2d:latest.integration'
     implementation 'com.amap.api:location:latest.integration'
     implementation project(path: ':kingoitar')
+//    implementation(name: "kingoitar-debug", ext: "aar")
 }

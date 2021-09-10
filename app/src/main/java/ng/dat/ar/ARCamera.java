@@ -1,7 +1,6 @@
 package ng.dat.ar;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.opengl.Matrix;
@@ -15,6 +14,8 @@ import android.view.ViewGroup;
 
 import java.io.IOException;
 import java.util.List;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 /**
  * Created by ntdat on 1/13/17.
@@ -30,7 +31,7 @@ public class ARCamera extends ViewGroup implements SurfaceHolder.Callback {
     List<Camera.Size> supportedPreviewSizes;
     Camera camera;
     Camera.Parameters parameters;
-    Activity activity;
+    AppCompatActivity activity;
 
     float[] projectionMatrix = new float[16];
 
@@ -43,7 +44,7 @@ public class ARCamera extends ViewGroup implements SurfaceHolder.Callback {
         super(context);
 
         this.surfaceView = surfaceView;
-        this.activity = (Activity) context;
+        this.activity = (AppCompatActivity) context;
         surfaceHolder = this.surfaceView.getHolder();
         surfaceHolder.addCallback(this);
         surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
