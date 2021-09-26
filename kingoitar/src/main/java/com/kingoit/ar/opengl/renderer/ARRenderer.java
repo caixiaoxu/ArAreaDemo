@@ -31,19 +31,25 @@ import javax.microedition.khronos.opengles.GL10;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ColorMatrix;
 import android.graphics.ColorMatrixColorFilter;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.Rect;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorManager;
 import android.opengl.GLSurfaceView;
 import android.opengl.GLU;
 import android.opengl.GLUtils;
+import android.text.TextPaint;
 import android.util.Log;
 import android.view.Surface;
 
+import com.kingoit.ar.R;
 import com.kingoit.ar.opengl.renderable.Renderable;
 import com.kingoit.ar.opengl.texture.Texture;
 import com.kingoit.ar.opengl.util.MatrixGrabber;
@@ -62,6 +68,9 @@ import com.kingoit.ar.world.BeyondarObject;
 import com.kingoit.ar.world.BeyondarObjectList;
 import com.kingoit.ar.world.GeoObject;
 import com.kingoit.ar.world.World;
+
+import androidx.core.content.res.ResourcesCompat;
+import androidx.core.graphics.drawable.DrawableCompat;
 
 /**
  * Renderer for drawing the {@link World World} with
@@ -92,7 +101,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
      * The default maximum distance that the object will be displayed (meters)
      * in the AR view.
      */
-    public static final float DEFAULT_MAX_AR_VIEW_DISTANCE = 100;
+    public static final float DEFAULT_MAX_AR_VIEW_DISTANCE = 1000;
 
     public static final float DEFAULT_DISTANCE_FACTOR = 2;
 
@@ -683,6 +692,20 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
             //创建线
             drawLines(gl, list, time);
         }
+        //离图形距离
+        if (null != list.getListener()) {
+            GeoObject nearByPoint = list.getListener().getNearByPoint();
+            //计算距离
+            double dst = Distance.calculateDistanceMeters(nearByPoint.getLongitude(), nearByPoint.getLatitude(), mWorld.getLongitude(),
+                    mWorld.getLatitude());
+            nearByPoint.setDistanceFromUser(dst);
+            //转换坐标
+            convertGPStoPoint3(nearByPoint, nearByPoint.getPosition());
+            //计算角度
+            MathUtils.calcAngleFaceToCamera(nearByPoint.getPosition(), mCameraPosition, nearByPoint.getAngle());
+            //绘制
+            loadDistanceTexture(gl, nearByPoint);
+        }
     }
 
     private void drawLines(GL10 gl, BeyondarObjectList list, long time) {
@@ -757,7 +780,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         if (dst < mArViewDistance) {
             renderObject = true;
         }
-        Log.e("渲染", "dst" + dst);
+        Log.e("渲染距离", "dst" + dst);
         boolean forceDraw = renderable.update(time, (float) dst, beyondarObject);
 
         if (forceDraw || renderObject) {
@@ -791,7 +814,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
                 Logger.w("Some plugins where changed while drawing a frame");
             }
 
-            renderable.draw(gl, defaultTexture);
+//            renderable.draw(gl, defaultTexture);
 
             if (mFillPositions) {
                 fillBeyondarObjectScreenPositions(beyondarObject);
@@ -1107,7 +1130,109 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         // Clean up
         bitmap.recycle();
         return new Texture(tmpTexture[0]).setImageSize(imageWidth, imageHeight);
+    }
 
+    /**
+     * 加载距离标题
+     * @param gl
+     * @param beyondarObject
+     */
+    private void loadDistanceTexture(GL10 gl, BeyondarObject beyondarObject) {
+        //绘制距离标题
+        Bitmap bitmap = getDistanceBitmap(beyondarObject);
+
+        Texture texture = load2DTexture(gl, bitmap);
+
+        Point3 position = beyondarObject.getPosition();
+        gl.glTranslatef(position.x, position.y, position.z + 0.5f);
+
+        // ROTATE According to the angles
+        Point3 angle = beyondarObject.getAngle();
+        gl.glRotatef((float) angle.x, 1, 0, 0);
+        gl.glRotatef((float) angle.y, 0, 1, 0);
+        gl.glRotatef((float) angle.z, 0, 0, 1);
+
+        gl.glBindTexture(GL10.GL_TEXTURE_2D, texture.getTexturePointer());
+        // Point to our buffers
+        gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glEnableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+        // Set the face rotation
+        gl.glFrontFace(GL10.GL_CW);
+
+        gl.glColor4f(1, 1, 1, 1);
+
+        // Point to our vertex buffer
+        gl.glVertexPointer(3, GL10.GL_FLOAT, 0, texture.getVerticesBuffer());
+        gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, texture.getTextureBuffer());
+
+        // Draw the vertices as triangle strip
+        gl.glDrawArrays(GL10.GL_TRIANGLE_STRIP, 0, texture.getVertices().length / 3);
+
+        // Disable the client state before leaving
+        gl.glDisableClientState(GL10.GL_VERTEX_ARRAY);
+        gl.glDisableClientState(GL10.GL_TEXTURE_COORD_ARRAY);
+
+        // rotate to the previous state
+        gl.glRotatef((float) angle.x, -1, 0, 0);
+        gl.glRotatef((float) angle.y, 0, -1, 0);
+        gl.glRotatef((float) angle.z, 0, 0, -1);
+
+        gl.glTranslatef(-position.x, -position.y, -(position.z + 0.5f));
+    }
+
+    /**
+     * 绘制距离图片
+     * @param beyondarObject
+     * @return
+     */
+    private Bitmap getDistanceBitmap(BeyondarObject beyondarObject) {
+        //画笔
+        Paint p = new TextPaint(TextPaint.ANTI_ALIAS_FLAG);
+        p.setColor(Color.BLACK);
+        int width = 430;
+        int height = 220;
+        //获取宽度
+        String context = String.format("%.2f", beyondarObject.getDistanceFromUser());
+
+        //根据文字高度宽度生成bitmap
+        Bitmap bitmap = Bitmap.createBitmap(width, height, Config.ARGB_8888);
+        Canvas canvas = new Canvas(bitmap);
+        //背景
+        Bitmap bgTip = mWorld.getBitmapCache().getBitmap(BitmapCache.generateUri(R.drawable.bg_tip));
+        Rect srcRect = new Rect(0, 0, bgTip.getWidth(), bgTip.getHeight());
+        RectF dstRectf = new RectF(0, 0, width, height);
+        canvas.drawBitmap(bgTip, srcRect, dstRectf, new Paint(Paint.ANTI_ALIAS_FLAG));
+//        canvas.drawARGB(136, 255, 255, 255);
+        // draw the text centered
+        p.setTextSize(36);
+        p.setFakeBoldText(true);
+        //获取标题高度
+        Paint.FontMetricsInt metrics = p.getFontMetricsInt();
+        int titleheight = metrics.bottom - metrics.top;
+        float baseLine = 30 + titleheight / 2f + (metrics.descent - metrics.ascent) / 2f - metrics.descent;
+        canvas.drawText("距离图斑", 52, baseLine, p);
+
+        p.setTextSize(80);
+        p.setColor(Color.RED);
+        //获取距离高度
+        int txtheight = metrics.bottom - metrics.top;
+        float txtWidth = p.measureText(context);
+        baseLine = 54 + titleheight + txtheight / 2f + (metrics.descent - metrics.ascent) / 2f - metrics.descent;
+        canvas.drawText(context, 52, baseLine, p);
+
+        p.setTextSize(20);
+        //获取单位高度
+        int unitheight = metrics.bottom - metrics.top;
+        baseLine = (54 + titleheight + txtheight - unitheight) + unitheight / 2f + (metrics.descent - metrics.ascent) / 2f - metrics.descent;
+        canvas.drawText("M", 52 + txtWidth + 14, baseLine, p);
+
+        //图标
+        Bitmap iconDistance = mWorld.getBitmapCache().getBitmap(BitmapCache.generateUri(R.drawable.icon_distance));
+        Rect iconSrc = new Rect(0, 0, iconDistance.getWidth(), iconDistance.getHeight());
+        RectF iconDst = new RectF(307, 44, 357, 155);
+        canvas.drawBitmap(iconDistance, iconSrc, iconDst, new Paint(Paint.ANTI_ALIAS_FLAG));
+        return bitmap;
     }
 
     @Override

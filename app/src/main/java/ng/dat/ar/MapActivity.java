@@ -9,16 +9,12 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationClient;
 import com.amap.api.location.AMapLocationClientOption;
 import com.amap.api.location.AMapLocationListener;
 import com.amap.api.maps2d.AMap;
 import com.amap.api.maps2d.CameraUpdateFactory;
-import com.amap.api.maps2d.CoordinateConverter;
 import com.amap.api.maps2d.LocationSource;
 import com.amap.api.maps2d.MapView;
 import com.amap.api.maps2d.model.BitmapDescriptorFactory;
@@ -30,7 +26,8 @@ import com.amap.api.maps2d.model.PolygonOptions;
 import java.util.ArrayList;
 import java.util.List;
 
-import ng.dat.ar.helper.GPSTransformUtil;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 import ng.dat.ar.helper.RealTimeLocation;
 import pub.devrel.easypermissions.EasyPermissions;
 import pub.devrel.easypermissions.PermissionRequest;
@@ -58,9 +55,9 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     private GeoRectifyingUtil mGeoRectifyingUtil = new GeoRectifyingUtil();
 
     private static final String[] PERMISSIONS =
-            {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA,Manifest.permission.ACCESS_NETWORK_STATE,
-                    Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.CHANGE_WIFI_STATE,Manifest.permission.INTERNET,
-                    Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE,Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
+            {Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.CAMERA, Manifest.permission.ACCESS_NETWORK_STATE,
+                    Manifest.permission.ACCESS_WIFI_STATE, Manifest.permission.CHANGE_WIFI_STATE, Manifest.permission.INTERNET,
+                    Manifest.permission.READ_PHONE_STATE, Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
                     Manifest.permission.BLUETOOTH, Manifest.permission.BLUETOOTH_ADMIN};
 
     private static final int PERMISSION_REQUESTCODE = 1;
@@ -80,7 +77,7 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
     }
 
     private void initPermission() {
-        PermissionRequest.Builder builder = new PermissionRequest.Builder(this,PERMISSION_REQUESTCODE,PERMISSIONS);
+        PermissionRequest.Builder builder = new PermissionRequest.Builder(this, PERMISSION_REQUESTCODE, PERMISSIONS);
         EasyPermissions.requestPermissions(builder.build());
     }
 
@@ -98,8 +95,9 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
                 if (mPolygon != null) {
                     mPolygon.remove();
                 }
-                double[] values = GPSTransformUtil.gcj02_To_Gps84(latLng.latitude, latLng.longitude);
-                mLatLngList.add(new LatLng(values[0], values[1]));
+//                double[] values = GPSTransformUtil.gcj02_To_Gps84(latLng.latitude, latLng.longitude);
+//                mLatLngList.add(new LatLng(values[0], values[1]));
+                mLatLngList.add(latLng);
                 polygonOptions.add(latLng);
                 mPolygon = mAMap.addPolygon(polygonOptions);
             }
@@ -195,9 +193,9 @@ public class MapActivity extends AppCompatActivity implements LocationSource,
         }
 
         mLocation = mAMap.getMyLocation();
-        double[] values = GPSTransformUtil.gcj02_To_Gps84(mLocation.getLatitude(), mLocation.getLongitude());
-        mLocation.setLatitude(values[0]);
-        mLocation.setLongitude(values[1]);
+//        double[] values = GPSTransformUtil.gcj02_To_Gps84(mLocation.getLatitude(), mLocation.getLongitude());
+//        mLocation.setLatitude(values[0]);
+//        mLocation.setLongitude(values[1]);
         Intent intent = new Intent(this, KArCamActivity.class);
         /*Bundle bundle = new Bundle();
         bundle.putSerializable("geometry", mLatLngList);

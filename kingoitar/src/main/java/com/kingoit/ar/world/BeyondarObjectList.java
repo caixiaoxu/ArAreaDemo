@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import com.kingoit.ar.opengl.texture.Texture;
+import com.kingoit.ar.util.math.geom.Point3;
 
 /**
  * This class allow the user to store according to type, so it is useful when a
@@ -42,6 +43,16 @@ public class BeyondarObjectList implements Iterable<BeyondarObject> {
 
     //0不画线 1画线
     private int drawType = 0;
+
+    private ShapeListener mListener;
+
+    public ShapeListener getListener() {
+        return mListener;
+    }
+
+    public void setListener(ShapeListener listener) {
+        mListener = listener;
+    }
 
     BeyondarObjectList(int type, World world) {
         mType = type;
@@ -221,4 +232,7 @@ public class BeyondarObjectList implements Iterable<BeyondarObject> {
         return mContainer.iterator();
     }
 
+    public interface ShapeListener {
+        GeoObject getNearByPoint();
+    }
 }

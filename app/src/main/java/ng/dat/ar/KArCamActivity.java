@@ -3,14 +3,7 @@ package ng.dat.ar;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.os.Bundle;
-import android.text.TextUtils;
 import android.util.Log;
-
-import androidx.annotation.Nullable;
-import androidx.core.graphics.drawable.DrawableCompat;
-import androidx.fragment.app.FragmentActivity;
-import ng.dat.ar.helper.GPSTransformUtil;
-import ng.dat.ar.helper.RealTimeLocation;
 
 import com.amap.api.location.AMapLocation;
 import com.amap.api.location.AMapLocationListener;
@@ -21,6 +14,11 @@ import com.kingoit.ar.world.GeoObject;
 import com.kingoit.ar.world.World;
 
 import java.util.ArrayList;
+
+import androidx.annotation.Nullable;
+import androidx.core.graphics.drawable.DrawableCompat;
+import androidx.fragment.app.FragmentActivity;
+import ng.dat.ar.helper.RealTimeLocation;
 
 /**
  * Created by Amal Krishnan on 27-03-2017.
@@ -73,7 +71,7 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
 
     private void Configure_AR() {
         world = new World(getApplicationContext());
-        world.setGeoPosition(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 0);
+        world.setGeoPosition(mLastLocation.getLatitude(), mLastLocation.getLongitude(), 2);
 //        if ("2".equals(mType)) {
 //            world.setGeoPosition(30.2774453, 119.98550681, 0);
 //        } else {
@@ -110,6 +108,12 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
                 polyGeoObj.setName("arObj" + j);
                 world.addBeyondarObject(polyGeoObj, i, 1);
             }
+            //加入离图形最近点的获取监听
+            world.setShapeListener(i, () -> {
+                GeoObject geoObject = new GeoObject();
+                geoObject.setGeoPosition(latLngs.get(0).latitude - 0.0003, latLngs.get(0).longitude + 0.0001, 0);
+                return geoObject;
+            });
         }
 
         // Send to the fragment
@@ -148,7 +152,10 @@ public class KArCamActivity extends FragmentActivity implements AMapLocationList
 
     @Override
     public void onLocationChanged(AMapLocation aMapLocation) {
-        double[] values = GPSTransformUtil.gcj02_To_Gps84(aMapLocation.getLatitude(), aMapLocation.getLongitude());
-        world.setGeoPosition(values[0], values[1], 2);
+        Log.e("定位位置", "经度:" + aMapLocation.getLongitude() + "，纬度:" + aMapLocation.getLatitude());
+//        double[] values = GPSTransformUtil.gcj02_To_Gps84(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+//        world.setGeoPosition(values[0], values[1], 2);
+        LatLng latLng = new LatLng(aMapLocation.getLatitude(), aMapLocation.getLongitude());
+        world.setGeoPosition(latLng.latitude, latLng.longitude);
     }
 }

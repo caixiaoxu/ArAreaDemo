@@ -101,9 +101,9 @@ public class Texture {
 
         for (int i = 0; i < mVertices.length; i++) {
             if ((i + 1) % 3 == 0) {
-                mVertices[i] = mVertices[i] * mHeightRate / 2;
+                mVertices[i] = mVertices[i] * mHeightRate * 2;
             } else {
-                mVertices[i] = mVertices[i] * mWidthRate / 2;
+                mVertices[i] = mVertices[i] * mWidthRate * 2;
             }
         }
 

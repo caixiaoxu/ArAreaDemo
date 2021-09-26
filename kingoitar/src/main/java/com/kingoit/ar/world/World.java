@@ -223,6 +223,14 @@ public class World implements Plugable<WorldPlugin> {
         addBeyondarObject(beyondarObject, worldListType, 0);
     }
 
+    public synchronized void setShapeListener(int worldListType, BeyondarObjectList.ShapeListener listener) {
+        BeyondarObjectList listTmp = getBeyondarObjectList(worldListType);
+        if (null == listTmp) {
+            throw new RuntimeException("Need to create BeyondarObjectList of worldListType");
+        }
+        listTmp.setListener(listener);
+    }
+
     /**
      * Add a {@link BeyondarObject BeyondarObject} to
      * the specified list in the world.
