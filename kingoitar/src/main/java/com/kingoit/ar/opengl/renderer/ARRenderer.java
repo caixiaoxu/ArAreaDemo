@@ -332,7 +332,6 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
             mRemappedRotationMatrix[2] = tempMatrix[2];
         }
         mRemappedRotationMatrix[3] = tempMatrix[3];
-
         if (0 == mRemappedRotationMatrix[4] || Math.abs(tempMatrix[4] - mRemappedRotationMatrix[4]) > 0.05) {
             mRemappedRotationMatrix[4] = tempMatrix[4];
         }
@@ -343,7 +342,6 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
             mRemappedRotationMatrix[6] = tempMatrix[6];
         }
         mRemappedRotationMatrix[7] = tempMatrix[7];
-
         if (0 == mRemappedRotationMatrix[8] || Math.abs(tempMatrix[8] - mRemappedRotationMatrix[8]) > 0.003) {
             mRemappedRotationMatrix[8] = tempMatrix[8];
         }
@@ -698,13 +696,16 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
             //计算距离
             double dst = Distance.calculateDistanceMeters(nearByPoint.getLongitude(), nearByPoint.getLatitude(), mWorld.getLongitude(),
                     mWorld.getLatitude());
-            nearByPoint.setDistanceFromUser(dst);
-            //转换坐标
-            convertGPStoPoint3(nearByPoint, nearByPoint.getPosition());
-            //计算角度
-            MathUtils.calcAngleFaceToCamera(nearByPoint.getPosition(), mCameraPosition, nearByPoint.getAngle());
-            //绘制
-            loadDistanceTexture(gl, nearByPoint);
+            Log.e("缩放值", "距离:" + dst);
+            if (dst >= minDst && dst <= maxDst) {
+                nearByPoint.setDistanceFromUser(dst);
+                //转换坐标
+                convertGPStoPoint3(nearByPoint, nearByPoint.getPosition());
+                //计算角度
+                MathUtils.calcAngleFaceToCamera(nearByPoint.getPosition(), mCameraPosition, nearByPoint.getAngle());
+                //绘制
+                loadDistanceTexture(gl, nearByPoint);
+            }
         }
     }
 
@@ -1134,6 +1135,7 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
 
     /**
      * 加载距离标题
+     *
      * @param gl
      * @param beyondarObject
      */
@@ -1143,8 +1145,12 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
 
         Texture texture = load2DTexture(gl, bitmap);
 
+        float scale = getScaleDistance(beyondarObject.getDistanceFromUser());
+        Log.e("缩放值", "scale:" + scale);
+
         Point3 position = beyondarObject.getPosition();
-        gl.glTranslatef(position.x, position.y, position.z + 0.5f);
+        float showZ = (5 * scale) / 10f;
+        gl.glTranslatef(position.x, position.y, position.z + showZ);
 
         // ROTATE According to the angles
         Point3 angle = beyondarObject.getAngle();
@@ -1162,6 +1168,9 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
 
         gl.glColor4f(1, 1, 1, 1);
 
+        //缩放图形
+        gl.glScalef(scale, scale, scale);
+
         // Point to our vertex buffer
         gl.glVertexPointer(3, GL10.GL_FLOAT, 0, texture.getVerticesBuffer());
         gl.glTexCoordPointer(2, GL10.GL_FLOAT, 0, texture.getTextureBuffer());
@@ -1178,11 +1187,43 @@ public class ARRenderer implements GLSurfaceView.Renderer, BeyondarSensorListene
         gl.glRotatef((float) angle.y, 0, -1, 0);
         gl.glRotatef((float) angle.z, 0, 0, -1);
 
-        gl.glTranslatef(-position.x, -position.y, -(position.z + 0.5f));
+        gl.glTranslatef(-position.x, -position.y, -(position.z + showZ));
+    }
+
+    //可显示图形的最小、最大、和阀值
+    private double minDst = 2, maxDst = 32, fa = 17;
+
+    /**
+     * 计算图形缩放值
+     *
+     * @param dst
+     * @return
+     */
+    private float getScaleDistance(double dst) {
+        //计算差值
+        double v = dst - fa;
+        float scale = 1;
+        if (v > 0) {
+            //大于7的绽放值
+            double temp = (1.5 - 1) / (maxDst - fa);
+            scale = (float) (1 + temp * v);
+        } else if (v < 0) {
+            //小于7的绽放值
+            double temp = (1 - 0.1) / (fa - minDst);
+            scale = (float) (1 + temp * v);
+        }
+        //判断最值，0.5<=scale<=2
+        if (scale < 0.1f) {
+            scale = 0.1f;
+        } else if (scale > 1.5f) {
+            scale = 1.5f;
+        }
+        return scale;
     }
 
     /**
      * 绘制距离图片
+     *
      * @param beyondarObject
      * @return
      */
