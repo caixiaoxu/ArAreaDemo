@@ -1,7 +1,6 @@
 package com.lsy.arareademo
 
 import android.app.Application
-import com.baidu.mapapi.SDKInitializer
 
 /**
  * @author Xuwl
@@ -12,7 +11,5 @@ class MyApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
-
-        SDKInitializer.initialize(this)
     }
 }

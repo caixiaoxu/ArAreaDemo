@@ -53,7 +53,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'
 
-    implementation 'com.baidu.lbsyun:BaiduMapSDK_Map:7.4.0'
-    implementation 'com.baidu.lbsyun:BaiduMapSDK_Location:9.1.8'
+    implementation 'com.amap.api:map2d:latest.integration'
+    implementation 'com.amap.api:location:latest.integration'
     implementation 'pub.devrel:easypermissions:3.0.0'
 }

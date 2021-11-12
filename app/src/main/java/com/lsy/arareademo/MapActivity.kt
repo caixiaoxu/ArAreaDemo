@@ -3,38 +3,59 @@ package com.lsy.arareademo
 import android.Manifest
 import android.content.Intent
 import android.graphics.Color
+import android.location.Location
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.baidu.location.BDAbstractLocationListener
-import com.baidu.location.BDLocation
-import com.baidu.location.LocationClient
-import com.baidu.location.LocationClientOption
-import com.baidu.mapapi.map.*
-import com.baidu.mapapi.model.LatLng
+import com.amap.api.location.AMapLocation
+import com.amap.api.location.AMapLocationClient
+import com.amap.api.location.AMapLocationClientOption
+import com.amap.api.location.AMapLocationListener
+import com.amap.api.maps2d.*
+import com.amap.api.maps2d.model.*
 import pub.devrel.easypermissions.EasyPermissions
 import pub.devrel.easypermissions.EasyPermissions.PermissionCallbacks
 import pub.devrel.easypermissions.PermissionRequest
 
 
-class MapActivity : AppCompatActivity(), PermissionCallbacks {
+class MapActivity : AppCompatActivity(), PermissionCallbacks, AMap.OnMyLocationChangeListener {
+    companion object {
+        private val PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
+            Manifest.permission.CAMERA,
+            Manifest.permission.ACCESS_NETWORK_STATE,
+            Manifest.permission.ACCESS_WIFI_STATE,
+            Manifest.permission.CHANGE_WIFI_STATE,
+            Manifest.permission.INTERNET,
+            Manifest.permission.READ_PHONE_STATE,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
+            Manifest.permission.BLUETOOTH,
+            Manifest.permission.BLUETOOTH_ADMIN)
+        private const val PERMISSION_REQUESTCODE = 1
+    }
+
     private lateinit var mMapView: MapView
-    private lateinit var mBaiduMap: BaiduMap
-    private lateinit var mLocationClient: LocationClient
+    private lateinit var mAMap: AMap
+    private lateinit var mLocationClient: AMapLocationClient
+    private var mPolyline: Polyline? = null
+    private var mPolygon: Polygon? = null
+    private var mPolylineOptions: PolylineOptions = PolylineOptions().width(4f)
+    private var mPolygonOptions: PolygonOptions =
+        PolygonOptions().fillColor(Color.TRANSPARENT).strokeWidth(4f).strokeColor(Color.BLACK)
     private val FILL_COLOR = Color.argb(10, 0, 0, 180)
     private val STROKE_COLOR = Color.argb(180, 3, 145, 255)
 
     private var curLocation: LatLng? = null
     private val mLatLngList: ArrayList<LatLng> = ArrayList()
-    private lateinit var mOverlayOptions: OverlayOptions
-    private var polygon: Overlay? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        AMapLocationClient.updatePrivacyShow(this, true, true)
+        AMapLocationClient.updatePrivacyAgree(this, true)
         setContentView(R.layout.activity_map)
         mMapView = findViewById(R.id.mapView)
         //在activity执行onCreate时执行mMapView.onCreate(savedInstanceState)，创建地图
-        mMapView.onCreate(this, savedInstanceState)
+        mMapView.onCreate(savedInstanceState)
         initPermission()
         initMap()
     }
@@ -64,103 +85,73 @@ class MapActivity : AppCompatActivity(), PermissionCallbacks {
 
     override fun onDestroy() {
         super.onDestroy()
-        mLocationClient.stop()
-        mBaiduMap.isMyLocationEnabled = false
+        mLocationClient.onDestroy()
+        mAMap.isMyLocationEnabled = false
         mMapView.onDestroy()
     }
 
     override fun onPermissionsGranted(i: Int, list: List<String>) {}
 
     override fun onPermissionsDenied(i: Int, list: List<String>) {}
+
     private fun initMap() {
-        mBaiduMap = mMapView.map
-        //普通地图 ,mBaiduMap是地图控制器对象
-//        mBaiduMap.mapType = BaiduMap.MAP_TYPE_NORMAL
-        mBaiduMap.isMyLocationEnabled = true
+        mAMap = mMapView.map
         //定位初始化
-        mLocationClient = LocationClient(this)
+        val myLocationStyle = MyLocationStyle()
+        myLocationStyle.showMyLocation(true)
+        // 自定义精度范围的圆形边框颜色
+        myLocationStyle.strokeColor(STROKE_COLOR)
+        //自定义精度范围的圆形边框宽度
+        myLocationStyle.strokeWidth(5f)
+        // 设置圆形的填充颜色
+        myLocationStyle.radiusFillColor(FILL_COLOR)
+        mAMap.setMyLocationStyle(myLocationStyle)
+        mAMap.setOnMyLocationChangeListener(this)
+        mAMap.isMyLocationEnabled = true
+        mAMap.uiSettings.isMyLocationButtonEnabled = true // 设置默认定位按钮是否显示
 
-        val option = LocationClientOption()
-        option.isOpenGps = true // 打开gps
-        option.setCoorType("bd09ll") // 设置坐标类型
-        option.isOnceLocation = true
+        mAMap.setOnMapClickListener {
+            mLatLngList.add(it)
+            mPolyline?.remove()
+            mPolygon?.remove()
 
-        mLocationClient.locOption = option
-
-        mBaiduMap.setOnMapClickListener(object : BaiduMap.OnMapClickListener {
-            override fun onMapClick(p0: LatLng) {
-                mLatLngList.add(p0)
-                polygon?.remove()
-
-                if (mLatLngList.size > 1) {
-                    //设置折线的属性
-                    mOverlayOptions =
-                        if (mLatLngList.size < 3) PolylineOptions().width(4).points(mLatLngList)
-                        else PolygonOptions().fillColor(Color.TRANSPARENT)
-                            .stroke(Stroke(4, Color.BLACK))
-                            .points(mLatLngList)
-                    polygon = mBaiduMap.addOverlay(mOverlayOptions)
+            if (mLatLngList.size > 1) {
+                //设置折线的属性
+                if (mLatLngList.size < 3) {
+                    mPolylineOptions.points.clear()
+                    mPolyline = mAMap.addPolyline(mPolylineOptions.addAll(mLatLngList))
+                } else {
+                    mPolygonOptions.points.clear()
+                    mPolygon = mAMap.addPolygon(mPolygonOptions.addAll(mLatLngList))
                 }
             }
-
-            override fun onMapPoiClick(p0: MapPoi) {
-            }
-        })
-
-        mBaiduMap.setMapStatus(MapStatusUpdateFactory.zoomTo(19f))
-
-        val myLocationListener = MyLocationListener()
-        val myLocationConfiguration =
-            MyLocationConfiguration(MyLocationConfiguration.LocationMode.NORMAL,
-                true, BitmapDescriptorFactory.fromResource(R.drawable.gps_point),
-                FILL_COLOR, STROKE_COLOR)
-        mBaiduMap.setMyLocationConfiguration(myLocationConfiguration)
-        mLocationClient.registerLocationListener(myLocationListener)
-        mLocationClient.start()
-    }
-
-    inner class MyLocationListener : BDAbstractLocationListener() {
-        override fun onReceiveLocation(location: BDLocation) {
-            //mapView 销毁后不在处理新接收的位置
-            if (location == null || mMapView == null) {
-                return
-            }
-            val locData = MyLocationData.Builder()
-                .accuracy(location.radius) // 此处设置开发者获取到的方向信息，顺时针0-360
-                .direction(location.direction).latitude(location.latitude)
-                .longitude(location.longitude).build()
-            mBaiduMap.setMyLocationData(locData)
-
-            curLocation = LatLng(location.latitude, location.longitude)
-            mBaiduMap.setMapStatus(MapStatusUpdateFactory.newLatLng(curLocation))
         }
     }
 
     fun clear(view: View) {
         mLatLngList.clear()
-        polygon?.remove()
-        polygon = null
+        mPolyline?.remove()
+        mPolygon?.remove()
+        mAMap.invalidate()
     }
 
     fun finish1(view: View?) {
+        curLocation = LatLng(mAMap.myLocation.latitude, mAMap.myLocation.longitude)
         val intent = Intent(this, MainActivity::class.java)
+//        mLatLngList.clear()
+//        mLatLngList.add(LatLng(curLocation!!.latitude,curLocation!!.longitude + 0.0001))
+//        mLatLngList.add(LatLng(curLocation!!.latitude + 0.0001,curLocation!!.longitude + 0.0002))
+//        mLatLngList.add(LatLng(curLocation!!.latitude + 0.0002,curLocation!!.longitude + 0.0002))
+//        mLatLngList.add(LatLng(curLocation!!.latitude ,curLocation!!.longitude + 0.0005))
         intent.putParcelableArrayListExtra("geometry", mLatLngList)
         intent.putExtra("location", curLocation)
         startActivity(intent);
     }
 
-    companion object {
-        private val PERMISSIONS = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,
-            Manifest.permission.CAMERA,
-            Manifest.permission.ACCESS_NETWORK_STATE,
-            Manifest.permission.ACCESS_WIFI_STATE,
-            Manifest.permission.CHANGE_WIFI_STATE,
-            Manifest.permission.INTERNET,
-            Manifest.permission.READ_PHONE_STATE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE,
-            Manifest.permission.ACCESS_LOCATION_EXTRA_COMMANDS,
-            Manifest.permission.BLUETOOTH,
-            Manifest.permission.BLUETOOTH_ADMIN)
-        private const val PERMISSION_REQUESTCODE = 1
+    override fun onMyLocationChange(location: Location?) {
+        if (location != null) {
+            mAMap.moveCamera(CameraUpdateFactory.newLatLngZoom(LatLng(location.latitude,
+                location.longitude), 17f))
+        }
     }
 }

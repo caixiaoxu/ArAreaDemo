@@ -1,13 +1,11 @@
 package com.lsy.arareademo
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.FrameLayout
-import androidx.fragment.app.Fragment
-import com.baidu.mapapi.model.LatLng
+import androidx.appcompat.app.AppCompatActivity
+import com.amap.api.maps2d.model.LatLng
 import com.kingo.kingoar.gles.fragments.ArAreaFragment
 import com.kingo.kingoar.gles.params.Location
-import com.kingo.kingoar.gles.params.Position
 
 class MainActivity : AppCompatActivity() {
     private lateinit var flControl: FrameLayout

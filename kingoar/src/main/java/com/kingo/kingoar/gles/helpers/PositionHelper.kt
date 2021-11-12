@@ -53,8 +53,8 @@ object PositionHelper {
         curLat: Double, curLon: Double, curAlt: Double,
         tagLat: Double, tagLon: Double, tagAlt: Double,
     ): Geomtery.Point {
-        val x = fastConversionGeopointsToMeters(curLat, tagLat).toFloat()
-        val y = fastConversionGeopointsToMeters(curLon, tagLon).toFloat()
+        val x = fastConversionGeopointsToMeters(curLon, tagLon).toFloat()
+        val y = fastConversionGeopointsToMeters(curLat, tagLat).toFloat()
 //        val z = fastConversionGeopointsToMeters(curAlt, tagAlt).toFloat()
         val z = (tagAlt - curAlt).toFloat()
 //        val z = -1f
@@ -62,13 +62,18 @@ object PositionHelper {
         return Geomtery.Point(x, y, z)
     }
 
+    /**
+     * 计算点2相对于点1的角度(x,y暂时无用)
+     * @param p1 点1
+     * @param p2 点2
+     */
     fun calcAngleFaceToCamera(p1: Geomtery.Point, p2: Geomtery.Point): Geomtery.Angle {
-        var x = -Math.toDegrees(atan2(p2.z - p1.z, p2.y - p1.y).toDouble()).toFloat()
-        var y = -Math.toDegrees(atan2(p2.z - p1.z, p2.x - p1.x).toDouble()).toFloat()
-        var z = -Math.toDegrees(atan2(p2.y - p1.y, p2.x - p1.x).toDouble()).toFloat()
-//        x = (x + 270) % 360
-//        y = (y + 270) % 360
-//        z = (z + 270) % 360
+        var x = Math.toDegrees(atan2(p2.z - p1.z, p2.y - p1.y).toDouble()).toFloat()
+        var y = Math.toDegrees(atan2(p2.z - p1.z, p2.x - p1.x).toDouble()).toFloat()
+        var z = Math.toDegrees(atan2(abs(p2.y - p1.y), abs(p2.x - p1.x)).toDouble()).toFloat()
+//        if (y < 0) {
+//            z += 90
+//        }
         return Geomtery.Angle(x, y, z)
     }
 }

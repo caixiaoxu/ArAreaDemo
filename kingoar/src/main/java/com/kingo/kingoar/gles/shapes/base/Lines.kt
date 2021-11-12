@@ -37,7 +37,11 @@ class Lines(val vertexData: FloatArray) : Shape() {
      */
     override fun draw() {
         GLES20.glLineWidth(10f)
-        GLES20.glDrawArrays(GLES20.GL_LINE_LOOP,
-            0, vertexData.size / TOTAL_COMPONENT_COUNT)
+        val lineCount = vertexData.size / TOTAL_COMPONENT_COUNT / 2
+        GLES20.glDrawArrays(GLES20.GL_LINE_LOOP, 0, lineCount)
+
+        for (i in 0 until lineCount) {
+            GLES20.glDrawArrays(GLES20.GL_POINTS, lineCount + i, 1)
+        }
     }
 }

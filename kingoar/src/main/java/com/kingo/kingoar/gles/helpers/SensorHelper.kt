@@ -149,13 +149,13 @@ class SensorHelper private constructor(
             throw NullPointerException("input and prev float arrays must be non-NULL")
         require(input.size == prev.size) { "input and prev must be the same length" }
 
-        if (abs(input[0] - prev[0]) > 0.05) {
+        if (abs(input[0] - prev[0]) > 0.03) {
             count++
         } else {
             count = 0
         }
 
-        if (count >= 5) {
+        if (0 == count || count >= 3) {
 //            val builder1 = StringBuilder()
 //            val builder2 = StringBuilder()
             for (i in input.indices) {
