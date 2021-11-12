@@ -4,7 +4,7 @@ import com.kingo.kingoar.gles.shapes.params.Geomtery
 import kotlin.math.*
 
 /**
- * 计算距离工具
+ * 计算坐标工具
  * @author Xuwl
  * @date 2021/11/8
  *

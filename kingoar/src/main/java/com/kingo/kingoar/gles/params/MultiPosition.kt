@@ -16,7 +16,7 @@ class MultiPosition(val curReal: Location, val positions: MutableList<Position>)
     fun getNearestPosition(): Position? {
         var nearest: Position? = null
         positions.forEach { p ->
-            if (null == nearest || p.distance > nearest!!.distance) {
+            if (null == nearest || p.distance < nearest!!.distance) {
                 nearest = p
             }
         }

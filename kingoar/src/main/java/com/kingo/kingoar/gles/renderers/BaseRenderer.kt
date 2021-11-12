@@ -7,6 +7,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 /**
+ * Renderer基类
  * @author Xuwl
  * @date 2021/10/29
  *

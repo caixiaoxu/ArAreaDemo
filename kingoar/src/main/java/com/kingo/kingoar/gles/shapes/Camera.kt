@@ -5,6 +5,7 @@ import com.kingo.kingoar.gles.arrays.VertexArray
 import com.kingo.kingoar.gles.shapes.base.Shape
 
 /**
+ * 相机
  * @author Xuwl
  * @date 2021/11/5
  *
@@ -19,7 +20,6 @@ class Camera : Shape() {
     private val textureArray: VertexArray
 
     init {
-
         val vertexData = floatArrayOf(
             -1.0f, 1.0f, 0.0f,  // top left
             -1.0f, -1.0f, 0.0f,  // bottom left
@@ -36,7 +36,6 @@ class Camera : Shape() {
         )
         textureArray = VertexArray(textureData)
     }
-
 
     override fun bindData(vararg attribLocation: Int) {
         vertexArray.setVertexAttribPointer(0,

@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLES20.*
 
 /**
+ * 普通的着色器程序
  * @author Xuwl
  * @date 2021/11/2
  *

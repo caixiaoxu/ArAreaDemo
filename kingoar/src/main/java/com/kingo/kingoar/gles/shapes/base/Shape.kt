@@ -1,6 +1,7 @@
 package com.kingo.kingoar.gles.shapes.base
 
 /**
+ * 图形基类
  * @author Xuwl
  * @date 2021/11/4
  *

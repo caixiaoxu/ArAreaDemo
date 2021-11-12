@@ -13,6 +13,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 /**
+ * 相机的Renderer
  * @author Xuwl
  * @date 2021/11/1
  *

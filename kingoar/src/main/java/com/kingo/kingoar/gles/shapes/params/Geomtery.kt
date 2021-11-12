@@ -1,6 +1,7 @@
 package com.kingo.kingoar.gles.shapes.params
 
 /**
+ * 绘制中所用到的图形参数
  * @author Xuwl
  * @date 2021/11/8
  *

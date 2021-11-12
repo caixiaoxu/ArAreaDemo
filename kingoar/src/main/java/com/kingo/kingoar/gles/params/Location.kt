@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 /**
+ * 经纬度信息
  * @author Xuwl
  * @date 2021/11/9
  *

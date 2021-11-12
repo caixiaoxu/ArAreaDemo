@@ -6,6 +6,7 @@ import kotlin.math.min
 import kotlin.math.tan
 
 /**
+ * 矩阵工具类
  * @author Xuwl
  * @date 2021/11/4
  *

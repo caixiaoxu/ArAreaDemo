@@ -4,6 +4,7 @@ import android.content.Context
 import android.opengl.GLES20.*
 
 /**
+ * 相机着色器程序
  * @author Xuwl
  * @date 2021/11/2
  *
@@ -27,9 +28,6 @@ class CameraShaderProgram(context: Context) : BaseShaderProgram(context,
         uTextureMatrixLocation = glGetUniformLocation(mProgram, "u_TextureMatrix")
     }
 
-    /**
-     *
-     */
     fun setUniforms(
         matrix: FloatArray,
         textureMatrix: FloatArray,

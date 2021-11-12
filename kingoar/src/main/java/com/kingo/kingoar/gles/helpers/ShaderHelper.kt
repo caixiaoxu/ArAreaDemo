@@ -8,6 +8,12 @@ import java.io.IOException
 import java.io.InputStreamReader
 
 /**
+ * 着色器工具类
+ * 功能：
+ *      1、从文件中读取着色器代码
+ *      2、编译着色器
+ *      3、与程序关联
+ *      4、校验状态
  * @author Xuwl
  * @date 2021/10/29
  *

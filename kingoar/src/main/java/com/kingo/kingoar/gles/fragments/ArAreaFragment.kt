@@ -26,6 +26,12 @@ import java.util.ArrayList
 import kotlin.math.round
 
 /**
+ * Ar展示界面
+ * 功能：
+ *      1、接收坐标数据转换成OpenGL数据
+ *      2、加载GLSurfaceView，并初始化
+ *      3、开启传感器，接收传感器数组并通过GLSUrfaceView刷新界面
+ *
  * @author Xuwl
  * @date 2021/11/1
  *
@@ -89,9 +95,9 @@ class ArAreaFragment : Fragment() {
         //设备旋转矩阵
         val orientationAngles = FloatArray(3)
         SensorManager.getOrientation(rotationMatrix, orientationAngles)
-        LogHelper.logE("方位角：${Math.toDegrees(orientationAngles[0].toDouble())}," +
-                "倾侧角：${Math.toDegrees(orientationAngles[1].toDouble())}," +
-                "俯仰角：${Math.toDegrees(orientationAngles[2].toDouble())}")
+//        LogHelper.logE("方位角：${Math.toDegrees(orientationAngles[0].toDouble())}," +
+//                "倾侧角：${Math.toDegrees(orientationAngles[1].toDouble())}," +
+//                "俯仰角：${Math.toDegrees(orientationAngles[2].toDouble())}")
         val sb =
             SpannableStringBuilder("方位角：${round(Math.toDegrees(orientationAngles[0].toDouble()) * 10).toFloat() / 10}")
         sb.setSpan(ForegroundColorSpan(Color.WHITE), 0, 4, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)

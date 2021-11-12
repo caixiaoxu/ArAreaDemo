@@ -4,6 +4,7 @@ import android.opengl.GLES20
 import com.kingo.kingoar.gles.arrays.VertexArray
 
 /**
+ * 线
  * @author Xuwl
  * @date 2021/11/9
  *

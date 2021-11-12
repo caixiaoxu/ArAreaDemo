@@ -5,7 +5,17 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
 
+/**
+ * 顶点数据处理类
+ *      单一原则：
+ *          1、开户顶点数组缓存内存空间
+ *          2、把顶点数组加载到对应的着色器变量中
+ *          3、更新顶点数组
+ * @author Xuwl
+ * @date 2021/11/1
+ */
 class VertexArray(vertexData: FloatArray) {
+    //开辟数据缓存空间
     private val floatBuffer: FloatBuffer =
         ByteBuffer.allocateDirect(vertexData.size * Float.SIZE_BYTES).run {
             order(ByteOrder.nativeOrder())

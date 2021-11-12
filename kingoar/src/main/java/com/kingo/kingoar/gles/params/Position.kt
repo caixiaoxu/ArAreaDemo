@@ -9,7 +9,7 @@ import com.kingo.kingoar.gles.shapes.params.Geomtery
  * @param real 现实中的经纬度
  */
 data class Position(val real: Location) {
-    var distance: Double = 0.0
-    var coordinate: Geomtery.Point? = null
-    var angle: Geomtery.Angle? = null
+    var distance: Double = 0.0//与相机所在位置的距离
+    var coordinate: Geomtery.Point? = null//绘制坐标
+    var angle: Geomtery.Angle? = null//相对中心点的角度
 }

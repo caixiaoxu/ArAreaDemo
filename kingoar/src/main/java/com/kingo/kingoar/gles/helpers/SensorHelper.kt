@@ -60,18 +60,6 @@ class SensorHelper private constructor(
     }
 
     /**
-     * 获取旋转矩阵
-     */
-    fun getRotationMatrix(rotationMatrix: FloatArray) {
-        //旋转矩阵
-        SensorManager.getRotationMatrix(rotationMatrix,
-            sInclination, mAccelerometerValues, mMagneticValues)
-
-//        SensorManager.remapCoordinateSystem(mRotationMatrix,
-//            SensorManager.AXIS_Y, SensorManager.AXIS_MINUS_X, mRemappedRotationMatrix)
-    }
-
-    /**
      * 检查当前类型传感器是否在传感器列表中
      * @param sensor 传感器
      */

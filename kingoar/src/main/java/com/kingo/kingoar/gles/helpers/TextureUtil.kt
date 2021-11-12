@@ -8,6 +8,9 @@ import android.opengl.GLUtils
 
 /**
  * 纹理工具类
+ * 功能：
+ *      1、加载普通图片纹理
+ *      2、加载立方体贴图纹理
  * @author Xuwl
  * @date 2021/10/22
  *

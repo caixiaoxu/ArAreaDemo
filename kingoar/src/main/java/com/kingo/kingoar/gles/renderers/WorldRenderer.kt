@@ -16,6 +16,7 @@ import javax.microedition.khronos.egl.EGLConfig
 import javax.microedition.khronos.opengles.GL10
 
 /**
+ * 真实世界的Renderer
  * @author Xuwl
  * @date 2021/11/4
  *
@@ -46,6 +47,7 @@ class WorldRenderer(
     private val mTextureMatrix = FloatArray(16)
 
     override fun initShapeAndProgram() {
+        //相机
         mCamera = Camera()
         mCameraShaderProgram = CameraShaderProgram(mContext)
 
@@ -88,6 +90,7 @@ class WorldRenderer(
                     PositionHelper.calcAngleFaceToCamera(Geomtery.Point(0f, 0f, 0f), coor)
             }
         }
+        //区域线
         mLines = Lines(vertexData)
         worldShaderProgram = WorldShaderProgram(mContext)
     }
@@ -124,6 +127,7 @@ class WorldRenderer(
         super.initMatrix(width, height)
         val aspectRatio = width.toFloat() / height.toFloat()
 //        MatrixHelper.createBaseOrthoM(mProjectionMatrix, width, height)
+        //透视投影
         MatrixHelper.perspectiveM(mProjectionMatrix, 45f, aspectRatio, 0.1f, 400f)
     }
 
