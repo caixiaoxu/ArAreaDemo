@@ -33,6 +33,7 @@ class Camera2Helper(private var mContext: Context) {
 
     //得到相机管理器
     private val cameraManager = mContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
+    private var mCameraCharacteristics: CameraCharacteristics? = null
 
     private val mHandler = Handler(Looper.getMainLooper())
     private val childHandler: Handler
@@ -43,28 +44,66 @@ class Camera2Helper(private var mContext: Context) {
         childHandler = Handler(handlerThread.looper)
     }
 
+    /**
+     * 打开相机预览
+     * @param texture 绘制对象
+     */
     fun startCameraPreview(texture: SurfaceTexture) {
-        startCameraPreview("${CameraCharacteristics.LENS_FACING_BACK}", texture)
+        startCameraPreview("${CameraCharacteristics.LENS_FACING_FRONT}", texture)
     }
 
+    /**
+     * 打开相机预览
+     * @param texture 绘制对象
+     */
+    fun startCameraPreview(surface: Surface) {
+        startCameraPreview("${CameraCharacteristics.LENS_FACING_FRONT}", surface)
+    }
+
+    /**
+     * 打开相机预览
+     * @param cameraId 镜头id
+     * @param texture 绘制对象
+     */
     fun startCameraPreview(cameraId: String, texture: SurfaceTexture) {
-
-        if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA)
-            != PackageManager.PERMISSION_GRANTED
-        ) return
-        cameraManager.openCamera(cameraId, MyStateCallback(Surface(texture)), mHandler)
+        startCameraPreview(cameraId, Surface(texture))
     }
 
+    /**
+     * 打开相机预览
+     * @param cameraId 镜头id
+     * @param surface 绘制对象
+     */
     fun startCameraPreview(cameraId: String, surface: Surface) {
+        //判断是否有权限
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.CAMERA)
             != PackageManager.PERMISSION_GRANTED
         ) return
+        mCameraCharacteristics = cameraManager.getCameraCharacteristics(cameraId)
+        //开启相机
         cameraManager.openCamera(cameraId, MyStateCallback(surface), mHandler)
     }
 
+    /**
+     * 计算角度
+     */
+    fun computeRelativeRotation(surfaceRotationDegrees: Int): Int {
+        return mCameraCharacteristics?.let {
+            val sensorOrientationDegrees = it.get(CameraCharacteristics.SENSOR_ORIENTATION)!!
+            val sign =
+                if (it.get(CameraCharacteristics.LENS_FACING) == CameraCharacteristics.LENS_FACING_FRONT) 1 else -1
+            return (sensorOrientationDegrees - surfaceRotationDegrees * sign + 360) % 360
+
+        } ?: 0
+    }
+
+    /**
+     * 相机的状态监听
+     */
     inner class MyStateCallback(private val surface: Surface) : CameraDevice.StateCallback() {
 
         override fun onOpened(camera: CameraDevice) {
+            //开启预览
             createCameraPreviewSession(camera)
         }
 

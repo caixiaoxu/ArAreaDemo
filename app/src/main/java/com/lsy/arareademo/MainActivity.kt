@@ -1,43 +1,41 @@
 package com.lsy.arareademo
 
+import android.content.Intent
 import android.os.Bundle
-import android.widget.FrameLayout
+import android.view.SurfaceHolder
+import android.view.SurfaceView
 import androidx.appcompat.app.AppCompatActivity
-import com.amap.api.maps2d.model.LatLng
-import com.kingo.kingoar.gles.fragments.ArAreaFragment
-import com.kingo.kingoar.gles.params.Location
+import com.kingo.kingoar.gles.helpers.Camera2Helper
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var flControl: FrameLayout
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val curLoc = intent.getParcelableExtra<LatLng>("location")
-        val tagLocs = intent.getParcelableArrayListExtra<LatLng>("geometry")
-        if (null != curLoc && null != tagLocs) {
-            val arAreaFragment = ArAreaFragment()
-            arAreaFragment.arguments = Bundle().apply {
-                putParcelable(ArAreaFragment.PARAM_CURLOC,
-                    Location(curLoc.latitude, curLoc.longitude, 1.0))
+        startActivity(Intent(this, MapActivity::class.java))
+        finish()
 
-                val locs = ArrayList<Location>()
-                tagLocs.forEach {
-                    locs.add(Location(it.latitude, it.longitude, 0.0))
-                }
-                putParcelableArrayList(ArAreaFragment.PARAM_TAGLOCS, locs)
-
-//                putParcelable(ArAreaFragment.PARAM_CURLOC, Location(30.275126, 119.990152, 1.0))
-//                putParcelableArrayList(ArAreaFragment.PARAM_TAGLOCS, arrayListOf(
-//                    Location(30.275394, 119.99076, 0.0),
-//                    Location(30.275609, 119.991661, 0.0),
-//                    Location(30.274686, 119.991645, 0.0),
-//                    Location(30.274696, 119.990837, 0.0),
-//                ))
-            }
-            supportFragmentManager.beginTransaction().replace(R.id.fl_control, arAreaFragment)
-                .commit()
-        }
+//        val surface = findViewById<SurfaceView>(R.id.surfaceView)
+//        val camera2Helper = Camera2Helper(this)
+//        surface.holder.addCallback(object : SurfaceHolder.Callback2{
+//            override fun surfaceCreated(holder: SurfaceHolder) {
+//                camera2Helper.startCameraPreview(surface.holder.surface)
+//            }
+//
+//            override fun surfaceChanged(
+//                holder: SurfaceHolder,
+//                format: Int,
+//                width: Int,
+//                height: Int,
+//            ) {
+//            }
+//
+//            override fun surfaceDestroyed(holder: SurfaceHolder) {
+//            }
+//
+//            override fun surfaceRedrawNeeded(holder: SurfaceHolder) {
+//            }
+//
+//        })
     }
 }

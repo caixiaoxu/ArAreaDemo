@@ -5,6 +5,7 @@ import android.graphics.SurfaceTexture
 import android.opengl.GLES11Ext
 import android.opengl.GLES20.*
 import android.opengl.Matrix
+import android.view.Surface
 import com.kingo.kingoar.gles.helpers.*
 import com.kingo.kingoar.gles.params.MultiPosition
 import com.kingo.kingoar.gles.programs.CameraShaderProgram
@@ -28,6 +29,7 @@ class WorldRenderer(
     val callback: () -> Unit,
 ) :
     BaseRenderer(), SurfaceTexture.OnFrameAvailableListener {
+    private lateinit var mCamera2Helper: Camera2Helper
     private lateinit var mCamera: Camera
     private lateinit var mCameraShaderProgram: CameraShaderProgram
 
@@ -42,6 +44,9 @@ class WorldRenderer(
 
     //模型矩阵
     protected val mModelMatrix = FloatArray(16)
+
+    //相机矫正矩阵
+    protected val mCameraMatrix = FloatArray(16)
 
     //相机纹理矩阵
     private val mTextureMatrix = FloatArray(16)
@@ -78,13 +83,20 @@ class WorldRenderer(
                 vertexData[Lines.TOTAL_COMPONENT_COUNT * index + 6] = 1f
 
                 //标出顶点
-                vertexData[multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index] = coor.x
-                vertexData[multiPosition.positions.size* Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 1] = coor.y
-                vertexData[multiPosition.positions.size* Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 2] = coor.z
-                vertexData[multiPosition.positions.size* Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 3] = 0f
-                vertexData[multiPosition.positions.size* Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 4] = 0f
-                vertexData[multiPosition.positions.size* Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 5] = 1f
-                vertexData[multiPosition.positions.size* Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 6] = 1f
+                vertexData[multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index] =
+                    coor.x
+                vertexData[multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 1] =
+                    coor.y
+                vertexData[multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 2] =
+                    coor.z
+                vertexData[multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 3] =
+                    0f
+                vertexData[multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 4] =
+                    0f
+                vertexData[multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 5] =
+                    1f
+                vertexData[multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT + Lines.TOTAL_COMPONENT_COUNT * index + 6] =
+                    1f
                 //计算相对中心点的角度
                 tagLoc.angle =
                     PositionHelper.calcAngleFaceToCamera(Geomtery.Point(0f, 0f, 0f), coor)
@@ -99,7 +111,11 @@ class WorldRenderer(
         super.onSurfaceCreated(gl, config)
         initTextureId()
         //打开相机
-        CameraHelper.startCamera(mSurfaceTexture!!)
+        mSurfaceTexture?.let {
+            //CameraHelper.startCamera(mSurfaceTexture!!)
+            mCamera2Helper = Camera2Helper(mContext)
+            mCamera2Helper.startCameraPreview(it)
+        }
     }
 
     /**
@@ -123,18 +139,28 @@ class WorldRenderer(
         mSurfaceTexture?.setOnFrameAvailableListener(this)
     }
 
+    override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
+        super.onSurfaceChanged(gl, width, height)
+        mSurfaceTexture?.setDefaultBufferSize(width, height)
+    }
+
     override fun initMatrix(width: Int, height: Int) {
         super.initMatrix(width, height)
         val aspectRatio = width.toFloat() / height.toFloat()
 //        MatrixHelper.createBaseOrthoM(mProjectionMatrix, width, height)
         //透视投影
         MatrixHelper.perspectiveM(mProjectionMatrix, 45f, aspectRatio, 0.1f, 400f)
+
+        //相机矩阵
+        Matrix.setIdentityM(mCameraMatrix, 0)
+        Matrix.scaleM(mCameraMatrix, 0, -1f, 1f, 1f)
+        Matrix.rotateM(mCameraMatrix, 0, 90f, 0f, 0f, 1f)
     }
 
     override fun onDrawFrame(gl: GL10?) {
         super.onDrawFrame(gl)
 
-//        drawCamera()
+        drawCamera()
         drawPoint()
     }
 
@@ -146,14 +172,8 @@ class WorldRenderer(
         mSurfaceTexture?.updateTexImage()
         mSurfaceTexture?.getTransformMatrix(mTextureMatrix)
 
-        //变换矩阵
-        val mMatrix = FloatArray(16)
-        Matrix.setIdentityM(mMatrix, 0)
-        Matrix.rotateM(mMatrix, 0, 180F, 0F, 0F, 1F)
-        Matrix.rotateM(mMatrix, 0, 180F, 0F, 1F, 0F)
-
         mCameraShaderProgram.useProgram()
-        mCameraShaderProgram.setUniforms(mMatrix, mTextureMatrix, mTextureId, 0)
+        mCameraShaderProgram.setUniforms(mCameraMatrix, mTextureMatrix, mTextureId, 0)
         mCamera.bindData(mCameraShaderProgram.aPositionLocation,
             mCameraShaderProgram.aCoordinatesLocation)
         mCamera.draw()
@@ -172,25 +192,6 @@ class WorldRenderer(
         val rotationMatrix = mSensorHelper.getRotationMatrix()
         val rotationProjectionMatrix = FloatArray(16)
         Matrix.multiplyMM(rotationProjectionMatrix, 0, mProjectionMatrix, 0, rotationMatrix, 0)
-
-        val nearestPosition = multiPosition.getNearestPosition()
-        //模型矩阵移动位置
-        Matrix.setIdentityM(mModelMatrix, 0)
-//        nearestPosition?.angle?.x?.let {
-//            Matrix.rotateM(mModelMatrix, 0, it, 1f, 0f, 0f)
-//            LogHelper.logI("旋转角度:x->$it")
-//        }
-//        nearestPosition?.angle?.y?.let {
-//            Matrix.rotateM(mModelMatrix, 0, it, 0f, 1f, 0f)
-//            LogHelper.logI("旋转角度:y->$it")
-//        }
-//        nearestPosition?.angle?.z?.let {
-//            Matrix.rotateM(mModelMatrix, 0, it, 0f, 0f, 1f)
-//            LogHelper.logI("旋转角度:z->$it")
-//        }
-        val viewModelProjectionMatrix = FloatArray(16)
-        Matrix.multiplyMM(viewModelProjectionMatrix, 0,
-            rotationProjectionMatrix, 0, mModelMatrix, 0)
 
         worldShaderProgram.useProgram()
         worldShaderProgram.setUniforms(rotationProjectionMatrix)

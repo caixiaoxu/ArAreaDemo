@@ -7,10 +7,7 @@ import android.location.Location
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.amap.api.location.AMapLocation
 import com.amap.api.location.AMapLocationClient
-import com.amap.api.location.AMapLocationClientOption
-import com.amap.api.location.AMapLocationListener
 import com.amap.api.maps2d.*
 import com.amap.api.maps2d.model.*
 import pub.devrel.easypermissions.EasyPermissions
@@ -137,7 +134,7 @@ class MapActivity : AppCompatActivity(), PermissionCallbacks, AMap.OnMyLocationC
 
     fun finish1(view: View?) {
         curLocation = LatLng(mAMap.myLocation.latitude, mAMap.myLocation.longitude)
-        val intent = Intent(this, MainActivity::class.java)
+        val intent = Intent(this, ArAreaActivity::class.java)
 //        mLatLngList.clear()
 //        mLatLngList.add(LatLng(curLocation!!.latitude,curLocation!!.longitude + 0.0001))
 //        mLatLngList.add(LatLng(curLocation!!.latitude + 0.0001,curLocation!!.longitude + 0.0002))
