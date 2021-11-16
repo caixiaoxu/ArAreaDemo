@@ -137,7 +137,7 @@ class Camera2Helper(private var mContext: Context) {
                                     CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE)
                                 // 打开闪光灯
                                 previewRequestBuilder.set(CaptureRequest.CONTROL_AE_MODE,
-                                    CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH)
+                                    CaptureRequest.CONTROL_AE_MODE_ON)
                                 // 显示预览
                                 val previewRequest: CaptureRequest = previewRequestBuilder.build()
                                 session.setRepeatingRequest(previewRequest,
