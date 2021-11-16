@@ -1,2 +1,3 @@
+rootProject.name = "ArAreaDemo"
 include ':app'
-include ':kingoitar'
+include ':kingoar'

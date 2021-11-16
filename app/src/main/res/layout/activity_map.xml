@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MapActivity">
+
     <com.amap.api.maps2d.MapView
         android:id="@+id/mapView"
         android:layout_width="match_parent"
@@ -19,48 +20,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="clear"
-        android:text="@string/geometry_edit_clear"
+        android:text="清除"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"/>
-
-    <Button
-        android:id="@+id/finish"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="finish"
-        android:visibility="gone"
-        android:text="@string/geometry_edit_finish"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/start"/>
 
     <Button
         android:id="@+id/finish1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="finish1"
-        android:text="@string/geometry_edit_finish"
+        android:text="跳转"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/finish"/>
-
-    <EditText
-        android:id="@+id/altitude"
-        android:layout_width="70dp"
-        android:layout_height="60dp"
-        android:text="20"
-        android:textColor="@android:color/black"
-        android:background="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/finish1"/>
-
-    <EditText
-        android:id="@+id/distance"
-        android:layout_width="70dp"
-        android:layout_height="60dp"
-        android:text="2"
-        android:textColor="@android:color/black"
-        android:background="@android:color/white"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/altitude"/>
+        app:layout_constraintLeft_toRightOf="@+id/start"/>
 
     <Button
         android:id="@+id/more"
@@ -69,8 +40,6 @@
         android:onClick="addRect"
         android:text="添加图形"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/distance"/>
-
-
+        app:layout_constraintLeft_toRightOf="@+id/finish1"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
