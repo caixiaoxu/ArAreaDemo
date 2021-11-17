@@ -24,7 +24,7 @@ android {
     }
 
     buildTypes {
-        debug{
+        debug {
             manifestPlaceholders = [GAO_DE_KEY: "sP6lLKmf0peT6MVYTZRgfXjaoZ6Qpz4n"]
         }
         release {
@@ -38,6 +38,15 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+    }
+
+    applicationVariants.all { variant ->
+        variant.outputs.all {
+            def versionName = defaultConfig.versionName
+            def versionCode = defaultConfig.versionCode
+            def buildType = variant.buildType.name
+            outputFileName = "${project.archivesBaseName}-v${versionName}-c${versionCode}-${buildType}.apk"
+        }
     }
 }
 
