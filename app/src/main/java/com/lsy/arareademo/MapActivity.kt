@@ -33,7 +33,6 @@ class MapActivity : AppCompatActivity(), PermissionCallbacks, AMap.OnMyLocationC
 
     private lateinit var mMapView: MapView
     private lateinit var mAMap: AMap
-    private lateinit var mLocationClient: AMapLocationClient
     private var mPolyline: Polyline? = null
     private var mPolygon: Polygon? = null
     private var mPolylineOptions: PolylineOptions = PolylineOptions().width(4f)
@@ -82,7 +81,6 @@ class MapActivity : AppCompatActivity(), PermissionCallbacks, AMap.OnMyLocationC
 
     override fun onDestroy() {
         super.onDestroy()
-        mLocationClient.onDestroy()
         mAMap.isMyLocationEnabled = false
         mMapView.onDestroy()
     }

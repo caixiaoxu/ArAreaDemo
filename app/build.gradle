@@ -23,13 +23,23 @@ android {
         }
     }
 
+    signingConfigs {
+        release {
+            keyAlias 'test'
+            keyPassword 'test123'
+            storeFile file('test.jks')
+            storePassword 'test123'
+        }
+    }
+
     buildTypes {
         debug {
-            manifestPlaceholders = [GAO_DE_KEY: "sP6lLKmf0peT6MVYTZRgfXjaoZ6Qpz4n"]
+
         }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     compileOptions {
