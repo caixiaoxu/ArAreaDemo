@@ -19,6 +19,7 @@ class ArAreaActivity : AppCompatActivity() {
         if (null != curLoc && null != tagLocs) {
             val arAreaFragment = ArAreaFragment()
             arAreaFragment.arguments = Bundle().apply {
+                putBoolean(ArAreaFragment.PARAM_ISOPENCAMERA, true)
                 putParcelable(ArAreaFragment.PARAM_CURLOC,
                     Location(curLoc.latitude, curLoc.longitude, 1.0))
 

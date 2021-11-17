@@ -41,9 +41,9 @@ class ArAreaFragment : Fragment() {
     companion object {
         const val PARAM_CURLOC = "param_curLoc"
         const val PARAM_TAGLOCS = "param_tagLocs"
+        const val PARAM_ISOPENCAMERA = "param_open_camera"
     }
 
-    private lateinit var tvAzimuth: TextView
     private lateinit var glSurfaceView: BaseGLSurfaceView
 
     override fun onCreateView(
@@ -54,13 +54,13 @@ class ArAreaFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        tvAzimuth = view.findViewById(R.id.tv_azimuth)
         glSurfaceView = view.findViewById(R.id.glsurfaceview)
 
         //是否支持OpenGl Es 2.0
         if (null != context && (context!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).deviceConfigurationInfo.reqGlEsVersion >= 0x2000) {
             val curLoc: Location? = arguments?.getParcelable(PARAM_CURLOC)
             val tags: ArrayList<Location>? = arguments?.getParcelableArrayList(PARAM_TAGLOCS)
+            val isOpenCamera: Boolean = arguments?.getBoolean(PARAM_ISOPENCAMERA, true) ?: true
             val tagLocs = ArrayList<Position>()
             tags?.forEach {
                 tagLocs.add(Position(it))
@@ -72,7 +72,7 @@ class ArAreaFragment : Fragment() {
 
                 val multiPosition = MultiPosition(curLoc, tagLocs)
                 glSurfaceView.setRenderer(WorldRenderer(requireContext(),
-                    multiPosition, startSensor()) { refreshRenderer() })
+                    multiPosition, isOpenCamera, startSensor()) { refreshRenderer() })
                 glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
             }
         }
@@ -83,26 +83,11 @@ class ArAreaFragment : Fragment() {
      */
     private fun startSensor(): SensorHelper {
         return SensorHelper.Builder(requireContext(), this) {
-            showSensorInfo(it)
             refreshRenderer()
         }.run {
             addSensors(listOf(SENSOR_ACCELEROMETER, SENSOR_INCLINATION, SENSOR_MAGNETIC))
             build()
         }
-    }
-
-    private fun showSensorInfo(rotationMatrix: FloatArray) {
-        //设备旋转矩阵
-        val orientationAngles = FloatArray(3)
-        SensorManager.getOrientation(rotationMatrix, orientationAngles)
-//        LogHelper.logE("方位角：${Math.toDegrees(orientationAngles[0].toDouble())}," +
-//                "倾侧角：${Math.toDegrees(orientationAngles[1].toDouble())}," +
-//                "俯仰角：${Math.toDegrees(orientationAngles[2].toDouble())}")
-        val sb =
-            SpannableStringBuilder("方位角：${round(Math.toDegrees(orientationAngles[0].toDouble()) * 10).toFloat() / 10}")
-        sb.setSpan(ForegroundColorSpan(Color.WHITE), 0, 4, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-        sb.setSpan(ForegroundColorSpan(Color.RED), 4, sb.length, Spannable.SPAN_INCLUSIVE_EXCLUSIVE)
-        tvAzimuth.text = sb
     }
 
     private fun refreshRenderer() {

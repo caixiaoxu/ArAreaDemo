@@ -25,6 +25,7 @@ import javax.microedition.khronos.opengles.GL10
 class WorldRenderer(
     private val mContext: Context,
     private val multiPosition: MultiPosition,
+    private val isOpenCamera: Boolean,
     val mSensorHelper: SensorHelper,
     val callback: () -> Unit,
 ) :
@@ -50,6 +51,8 @@ class WorldRenderer(
 
     //相机纹理矩阵
     private val mTextureMatrix = FloatArray(16)
+
+    override fun initClearColor(): FloatArray = floatArrayOf(0f, 0f, 0f, 0f)
 
     override fun initShapeAndProgram() {
         //相机
@@ -109,12 +112,14 @@ class WorldRenderer(
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
         super.onSurfaceCreated(gl, config)
-        initTextureId()
-        //打开相机
-        mSurfaceTexture?.let {
-            //CameraHelper.startCamera(mSurfaceTexture!!)
-            mCamera2Helper = Camera2Helper(mContext)
-            mCamera2Helper.startCameraPreview(it)
+        if (isOpenCamera) {
+            initTextureId()
+            //打开相机
+            mSurfaceTexture?.let {
+                //CameraHelper.startCamera(mSurfaceTexture!!)
+                mCamera2Helper = Camera2Helper(mContext)
+                mCamera2Helper.startCameraPreview(it)
+            }
         }
     }
 
@@ -160,7 +165,9 @@ class WorldRenderer(
     override fun onDrawFrame(gl: GL10?) {
         super.onDrawFrame(gl)
 
-        drawCamera()
+        if (isOpenCamera) {
+            drawCamera()
+        }
         drawPoint()
     }
 
