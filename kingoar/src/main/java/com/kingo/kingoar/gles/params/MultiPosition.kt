@@ -8,7 +8,7 @@ package com.kingo.kingoar.gles.params
  * @param curReal 当前定位
  * @param positions 绘制点的封装集合
  */
-class MultiPosition(val curReal: Location, val positions: MutableList<Position>) {
+class MultiPosition(var curReal: Location, val positions: MutableList<Position>) {
 
     /**
      * 获取距离最近的点

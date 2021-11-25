@@ -12,7 +12,9 @@ import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import android.widget.TextView
+import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.fragment.app.Fragment
 import com.kingo.kingoar.R
 import com.kingo.kingoar.gles.helpers.LogHelper
@@ -42,9 +44,13 @@ class ArAreaFragment : Fragment() {
         const val PARAM_CURLOC = "param_curLoc"
         const val PARAM_TAGLOCS = "param_tagLocs"
         const val PARAM_ISOPENCAMERA = "param_open_camera"
+        const val PARAM_SHOW_ALTITUDE_CONTROL = "param_show_altitude_control"
     }
 
     private lateinit var glSurfaceView: BaseGLSurfaceView
+    private lateinit var mSeekBar: AppCompatSeekBar
+    private lateinit var worldRenderer: WorldRenderer
+    private var curLoc: Location? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
@@ -55,10 +61,36 @@ class ArAreaFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         glSurfaceView = view.findViewById(R.id.glsurfaceview)
+        mSeekBar = view.findViewById(R.id.sb_altitude)
+        glSurfaceView.setZOrderMediaOverlay(true)
+
+        val showAltitudeControl = arguments?.getBoolean(PARAM_SHOW_ALTITUDE_CONTROL, false) ?: false
+        if (showAltitudeControl) {
+            mSeekBar.visibility = View.VISIBLE
+            mSeekBar.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean,
+                ) {
+                    curLoc?.let {
+                        it.altitude = progress.toDouble()
+                        worldRenderer.changeCurLocation(it)
+                    }
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                }
+
+            })
+        }
 
         //是否支持OpenGl Es 2.0
         if (null != context && (context!!.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager).deviceConfigurationInfo.reqGlEsVersion >= 0x2000) {
-            val curLoc: Location? = arguments?.getParcelable(PARAM_CURLOC)
+            curLoc = arguments?.getParcelable(PARAM_CURLOC)
             val tags: ArrayList<Location>? = arguments?.getParcelableArrayList(PARAM_TAGLOCS)
             val isOpenCamera: Boolean = arguments?.getBoolean(PARAM_ISOPENCAMERA, true) ?: true
             val tagLocs = ArrayList<Position>()
@@ -70,9 +102,12 @@ class ArAreaFragment : Fragment() {
                 glSurfaceView.setEGLContextClientVersion(2)
 //            glSurfaceView.setRenderer(NormalRenderer(requireContext()))
 
-                val multiPosition = MultiPosition(curLoc, tagLocs)
-                glSurfaceView.setRenderer(WorldRenderer(requireContext(),
-                    multiPosition, isOpenCamera, startSensor()) { refreshRenderer() })
+                curLoc!!.altitude = mSeekBar.progress.toDouble()
+                val multiPosition = MultiPosition(curLoc!!, tagLocs)
+
+                worldRenderer = WorldRenderer(requireContext(),
+                    multiPosition, isOpenCamera, startSensor()) { refreshRenderer() }
+                glSurfaceView.setRenderer(worldRenderer)
                 glSurfaceView.renderMode = GLSurfaceView.RENDERMODE_WHEN_DIRTY
             }
         }

@@ -7,6 +7,7 @@ import android.opengl.GLES20.*
 import android.opengl.Matrix
 import android.view.Surface
 import com.kingo.kingoar.gles.helpers.*
+import com.kingo.kingoar.gles.params.Location
 import com.kingo.kingoar.gles.params.MultiPosition
 import com.kingo.kingoar.gles.programs.CameraShaderProgram
 import com.kingo.kingoar.gles.programs.WorldShaderProgram
@@ -59,6 +60,14 @@ class WorldRenderer(
         mCamera = Camera()
         mCameraShaderProgram = CameraShaderProgram(mContext)
 
+        initLineas()
+        worldShaderProgram = WorldShaderProgram(mContext)
+    }
+
+    /**
+     * 计算线的坐标并创建线的对象
+     */
+    private fun initLineas() {
         val vertexData = FloatArray(multiPosition.positions.size * Lines.TOTAL_COMPONENT_COUNT * 2)
         multiPosition.positions.forEachIndexed { index, tagLoc ->
             //计算两点间的距离，单位米
@@ -75,6 +84,7 @@ class WorldRenderer(
                 tagLoc.real.altitude)
             require(null != tagLoc.coordinate) { "经纬度转换成屏幕坐标失败." }
 
+            //顶点坐标
             tagLoc.coordinate?.let { coor ->
                 //画线的点
                 vertexData[Lines.TOTAL_COMPONENT_COUNT * index] = coor.x
@@ -107,7 +117,14 @@ class WorldRenderer(
         }
         //区域线
         mLines = Lines(vertexData)
-        worldShaderProgram = WorldShaderProgram(mContext)
+    }
+
+    /**
+     * 更新当前的位置信息（当前位置改变后，线的顶点坐标也需要重新计算）
+     */
+    fun changeCurLocation(curReal: Location) {
+        multiPosition.curReal = curReal
+        initLineas()
     }
 
     override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {

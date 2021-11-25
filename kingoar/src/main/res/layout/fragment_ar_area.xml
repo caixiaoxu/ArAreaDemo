@@ -8,4 +8,16 @@
         android:id="@+id/glsurfaceview"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <androidx.appcompat.widget.AppCompatSeekBar
+        android:id="@+id/sb_altitude"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:layout_margin="15dp"
+        android:max="200"
+        android:min="1"
+        android:visibility="gone"
+        android:progress="2" />
+
 </FrameLayout>
