@@ -2,30 +2,22 @@ package com.kingo.kingoar.gles.fragments
 
 import android.app.ActivityManager
 import android.content.Context
-import android.graphics.Color
-import android.hardware.SensorManager
 import android.opengl.GLSurfaceView
 import android.os.Bundle
-import android.text.Spannable
-import android.text.SpannableStringBuilder
-import android.text.style.ForegroundColorSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
-import android.widget.TextView
 import androidx.appcompat.widget.AppCompatSeekBar
 import androidx.fragment.app.Fragment
 import com.kingo.kingoar.R
-import com.kingo.kingoar.gles.helpers.LogHelper
 import com.kingo.kingoar.gles.helpers.SensorHelper
 import com.kingo.kingoar.gles.params.Location
 import com.kingo.kingoar.gles.params.MultiPosition
 import com.kingo.kingoar.gles.params.Position
 import com.kingo.kingoar.gles.renderers.WorldRenderer
 import com.kingo.kingoar.gles.views.BaseGLSurfaceView
-import java.util.ArrayList
-import kotlin.math.round
+import java.util.*
 
 /**
  * Ar展示界面
@@ -49,7 +41,7 @@ class ArAreaFragment : Fragment() {
 
     private lateinit var glSurfaceView: BaseGLSurfaceView
     private lateinit var mSeekBar: AppCompatSeekBar
-    private lateinit var worldRenderer: WorldRenderer
+    private var worldRenderer: WorldRenderer? = null
     private var curLoc: Location? = null
 
     override fun onCreateView(
@@ -75,7 +67,7 @@ class ArAreaFragment : Fragment() {
                 ) {
                     curLoc?.let {
                         it.altitude = progress.toDouble()
-                        worldRenderer.changeCurLocation(it)
+                        worldRenderer?.changeCurLocation(it)
                     }
                 }
 
@@ -102,7 +94,11 @@ class ArAreaFragment : Fragment() {
                 glSurfaceView.setEGLContextClientVersion(2)
 //            glSurfaceView.setRenderer(NormalRenderer(requireContext()))
 
-                curLoc!!.altitude = mSeekBar.progress.toDouble()
+                if (0.0 == curLoc!!.altitude) {
+                    curLoc!!.altitude = mSeekBar.progress.toDouble()
+                } else {
+                    mSeekBar.progress = curLoc!!.altitude.toInt()
+                }
                 val multiPosition = MultiPosition(curLoc!!, tagLocs)
 
                 worldRenderer = WorldRenderer(requireContext(),
