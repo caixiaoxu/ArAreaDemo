@@ -19,6 +19,9 @@ abstract class BaseRenderer : GLSurfaceView.Renderer {
      */
     private val mClearColor: FloatArray by lazy { initClearColor() }
 
+    protected var mWidth: Int = 0
+    protected var mHeight: Int = 0
+
     /**
      * 方便子类重写
      */
@@ -40,6 +43,8 @@ abstract class BaseRenderer : GLSurfaceView.Renderer {
 
     override fun onSurfaceChanged(gl: GL10?, width: Int, height: Int) {
         LogHelper.logI("onSurfaceChanged.")
+        mWidth = width
+        mHeight = height
         //窗口大小
         glViewport(0, 0, width, height)
         //初始化矩阵

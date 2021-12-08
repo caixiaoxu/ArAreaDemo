@@ -9,7 +9,7 @@ import com.kingo.kingoar.gles.arrays.VertexArray
  * @date 2021/11/9
  *
  */
-class Lines(val vertexData: FloatArray) : Shape() {
+class Lines(var vertexData: FloatArray) : Shape() {
     companion object {
         const val POSITION_COMPONENT_COUNT = 3
         const val COLOR_COMPONENT_COUNT = 4
@@ -18,9 +18,17 @@ class Lines(val vertexData: FloatArray) : Shape() {
 
     private val STRIDE: Int = TOTAL_COMPONENT_COUNT * Float.SIZE_BYTES
 
-    private val vertexArray: VertexArray
+    private var vertexArray: VertexArray
 
     init {
+        vertexArray = VertexArray(vertexData)
+    }
+
+    /**
+     * 更新顶点坐标
+     */
+    fun updateVertexData(vertexData: FloatArray) {
+        this.vertexData = vertexData
         vertexArray = VertexArray(vertexData)
     }
 

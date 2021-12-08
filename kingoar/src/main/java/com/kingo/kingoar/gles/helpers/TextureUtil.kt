@@ -56,6 +56,37 @@ object TextureUtil {
             GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
         }
     }
+    /**
+     * 加载纹理
+     * @param res 资源管理
+     * @param rId 资源Id
+     */
+    fun loadTexture(bitmap:Bitmap): Int {
+        //生成一个ID，赋值给变量
+        val textureIds = IntArray(1)
+        GLES20.glGenTextures(1, textureIds, 0)
+        if (0 == textureIds[0]) {
+            LogHelper.logE("Could not generate a new OpenGL texture object.")
+            return 0
+        }
+        //返回处理好的纹理Id
+        return textureIds[0].also {
+            //绑定纹理
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, it)
+            //设置纹理过滤参数
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MIN_FILTER, GLES20.GL_LINEAR_MIPMAP_LINEAR)
+            GLES20.glTexParameteri(GLES20.GL_TEXTURE_2D,
+                GLES20.GL_TEXTURE_MAG_FILTER, GLES20.GL_LINEAR)
+            //加载纹理
+            GLUtils.texImage2D(GLES20.GL_TEXTURE_2D, 0, bitmap, 0)
+            bitmap.recycle()
+            //生成MIP贴图
+            GLES20.glGenerateMipmap(GLES20.GL_TEXTURE_2D)
+            //解绑纹理
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, 0)
+        }
+    }
 
     /**
      * 加载立方体贴图

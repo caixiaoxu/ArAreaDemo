@@ -43,6 +43,7 @@ class MapActivity : AppCompatActivity(), PermissionCallbacks, AMap.OnMyLocationC
 
     private var curLocation: LatLng? = null
     private val mLatLngList: ArrayList<LatLng> = ArrayList()
+    private val mLatLngLists: ArrayList<ArrayList<LatLng>> = ArrayList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -123,7 +124,12 @@ class MapActivity : AppCompatActivity(), PermissionCallbacks, AMap.OnMyLocationC
         }
     }
 
-    fun clear(view: View) {
+    fun clear(view: View?) {
+        mLatLngLists.clear()
+        clearCur()
+    }
+
+    private fun clearCur() {
         mLatLngList.clear()
         mPolyline?.remove()
         mPolygon?.remove()
@@ -131,6 +137,10 @@ class MapActivity : AppCompatActivity(), PermissionCallbacks, AMap.OnMyLocationC
     }
 
     fun finish1(view: View?) {
+        if (mLatLngList.size > 0){
+            mLatLngLists.add(mLatLngList)
+        }
+
         curLocation = LatLng(mAMap.myLocation.latitude, mAMap.myLocation.longitude)
         val intent = Intent(this, ArAreaActivity::class.java)
 //        mLatLngList.clear()
@@ -138,9 +148,14 @@ class MapActivity : AppCompatActivity(), PermissionCallbacks, AMap.OnMyLocationC
 //        mLatLngList.add(LatLng(curLocation!!.latitude + 0.0001,curLocation!!.longitude + 0.0002))
 //        mLatLngList.add(LatLng(curLocation!!.latitude + 0.0002,curLocation!!.longitude + 0.0002))
 //        mLatLngList.add(LatLng(curLocation!!.latitude ,curLocation!!.longitude + 0.0005))
-        intent.putParcelableArrayListExtra("geometry", mLatLngList)
+        intent.putExtra("geometrys", mLatLngLists)
         intent.putExtra("location", curLocation)
         startActivity(intent);
+    }
+
+    fun addRect(view: View?) {
+        mLatLngLists.add(ArrayList(mLatLngList))
+        clearCur()
     }
 
     override fun onMyLocationChange(location: Location?) {

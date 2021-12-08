@@ -1,12 +1,16 @@
 package com.kingo.kingoar.gles.renderers
 
 import android.content.Context
-import android.opengl.GLES20
+import android.graphics.BitmapFactory
 import android.opengl.Matrix
+import com.kingo.kingoar.R
 import com.kingo.kingoar.gles.helpers.MatrixHelper
-import com.kingo.kingoar.gles.programs.NormalShaderProgram
-import com.kingo.kingoar.gles.shapes.base.Lines
-import javax.microedition.khronos.egl.EGLConfig
+import com.kingo.kingoar.gles.helpers.TextureUtil
+import com.kingo.kingoar.gles.params.Location
+import com.kingo.kingoar.gles.params.Position
+import com.kingo.kingoar.gles.programs.DistanceShaderProgram
+import com.kingo.kingoar.gles.shapes.DistancePrompt
+import com.kingo.kingoar.gles.shapes.params.Geomtery
 import javax.microedition.khronos.opengles.GL10
 
 /**
@@ -19,25 +23,21 @@ class NormalRenderer(val mContext: Context) : BaseRenderer() {
     protected val mModelMatrix = FloatArray(16)
     protected val mModelProjectionMatrix = FloatArray(16)
 
-    private lateinit var mLines: Lines
-    private lateinit var mNormalShaderProgram: NormalShaderProgram
+    private lateinit var mDistancePrompt: DistancePrompt
+    private lateinit var mDistanceShaderProgram: DistanceShaderProgram
 
     var angleX = 0f
     var angleY = 0f
-
-    override fun onSurfaceCreated(gl: GL10?, config: EGLConfig?) {
-        super.onSurfaceCreated(gl, config)
-
-//        GLES20.glEnable(GLES20.GL_BLEND)
-//        GLES20.glEnable(GLES20.GL_DEPTH_TEST)
-    }
-
+    private var textureId: Int = 0
     override fun initShapeAndProgram() {
-        mLines = Lines(floatArrayOf(
-            0f, 0f, 0f,
-            0f, 0.5f, 0f
-        ))
-        mNormalShaderProgram = NormalShaderProgram(mContext)
+        mDistancePrompt =
+            DistancePrompt(Position(Location(0.0, 0.0, 0.0)).apply {
+                coordinate = Geomtery.Point(0.5f, 0.5f, 0f)
+            },
+                BitmapFactory.decodeResource(mContext.resources, R.mipmap.bg_tip),
+                BitmapFactory.decodeResource(mContext.resources, R.mipmap.icon_distance))
+        mDistanceShaderProgram = DistanceShaderProgram(mContext)
+        textureId = TextureUtil.loadTexture(mContext.resources, R.mipmap.test1)
     }
 
     override fun initMatrix(width: Int, height: Int) {
@@ -48,19 +48,19 @@ class NormalRenderer(val mContext: Context) : BaseRenderer() {
     }
 
     override fun onDrawFrame(gl: GL10?) {
-//        super.onDrawFrame(gl)
-        GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT or GLES20.GL_DEPTH_BUFFER_BIT)
-        Matrix.setIdentityM(mModelMatrix, 0)
-//        Matrix.translateM(mModelMatrix, 0, 0f, 0f, -2f)
-        Matrix.rotateM(mModelMatrix, 0, angleX, 0f, 1f, 0f)
-        Matrix.rotateM(mModelMatrix, 0, angleY, 1f, 0f, 0f)
-        Matrix.multiplyMM(mModelProjectionMatrix, 0, mProjectionMatrix, 0, mModelMatrix, 0)
+        super.onDrawFrame(gl)
 
-        mNormalShaderProgram.useProgram()
-        mNormalShaderProgram.setUniforms(mModelProjectionMatrix)
-        mLines.bindData(mNormalShaderProgram.aPositionLocation)
-//        mLines.bindData(mNormalShaderProgram.aPositionLocation,
-//            mNormalShaderProgram.aColorLocation)
-        mLines.draw()
+        val modelMatrix = FloatArray(16)
+        Matrix.setIdentityM(modelMatrix, 0)
+//        Matrix.translateM(modelMatrix, 0, 0f, 0f, 0f)
+        Matrix.rotateM(modelMatrix, 0, 80f, 1f, 1f, 0f)
+//        Matrix.translateM(modelMatrix, 0, -0.5f, -1f, 5f)
+        Matrix.multiplyMM(modelMatrix, 0, mProjectionMatrix, 0, modelMatrix, 0)
+
+        mDistanceShaderProgram.useProgram()
+        mDistanceShaderProgram.setUniforms(modelMatrix, textureId, 1)
+        mDistancePrompt.bindData(mDistanceShaderProgram.aPositionLocation,
+            mDistanceShaderProgram.aTextureCoordinatesLocation)
+        mDistancePrompt.draw()
     }
 }

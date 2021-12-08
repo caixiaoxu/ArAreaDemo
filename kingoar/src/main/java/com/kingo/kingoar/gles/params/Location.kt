@@ -9,7 +9,7 @@ import android.os.Parcelable
  * @date 2021/11/9
  *
  */
-data class Location(val latitude: Double, val longitude: Double, var altitude: Double) :
+data class Location(var latitude: Double, var longitude: Double, var altitude: Double) :
     Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readDouble(),

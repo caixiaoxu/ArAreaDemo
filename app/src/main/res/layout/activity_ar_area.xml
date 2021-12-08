@@ -5,4 +5,18 @@
     android:id="@+id/fl_control"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ArAreaActivity" />
+    tools:context=".ArAreaActivity">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="changePosition"
+        android:text="改变位置"/>
+
+    <Button
+        android:id="@+id/ar_test"
+        android:layout_marginStart="100dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="测试按钮" />
+</FrameLayout>

@@ -7,19 +7,11 @@ package com.kingo.kingoar.gles.params
  *
  * @param curReal 当前定位
  * @param positions 绘制点的封装集合
+ * @param centerLocation 图形的中心点
  */
-class MultiPosition(var curReal: Location, val positions: MutableList<Position>) {
-
-    /**
-     * 获取距离最近的点
-     */
-    fun getNearestPosition(): Position? {
-        var nearest: Position? = null
-        positions.forEach { p ->
-            if (null == nearest || p.distance < nearest!!.distance) {
-                nearest = p
-            }
-        }
-        return nearest
-    }
+class MultiPosition(
+    var curReal: Location,
+    val positions: ArrayList<ArrayList<Position>>,
+    val centerLocation: ArrayList<Position>,
+) {
 }

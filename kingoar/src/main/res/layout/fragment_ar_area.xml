@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/fl_AllViews"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -9,15 +9,52 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 
-    <androidx.appcompat.widget.AppCompatSeekBar
-        android:id="@+id/sb_altitude"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:id="@+id/rl_seekBar"
+        android:layout_width="250dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_margin="15dp"
-        android:max="200"
-        android:min="1"
-        android:visibility="gone"
-        android:progress="2" />
+        android:layout_gravity="right|bottom"
+        android:layout_marginEnd="60dp"
+        android:layout_marginBottom="10dp"
+        android:gravity="center"
+        android:visibility="gone">
 
+        <TextView
+            android:id="@+id/tv_current_high"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="当前位置：2M"
+            android:textColor="#000000" />
+
+        <TextView
+            android:id="@+id/tv_left_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_current_high"
+            android:text="1M"
+            android:textColor="#000000" />
+
+        <androidx.appcompat.widget.AppCompatSeekBar
+            android:id="@+id/sb_altitude"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_current_high"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_margin="15dp"
+            android:layout_toLeftOf="@+id/tv_right_tips"
+            android:layout_toRightOf="@id/tv_left_tips"
+            android:max="200"
+            android:min="1"
+            android:progress="2" />
+
+        <TextView
+            android:id="@+id/tv_right_tips"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_current_high"
+            android:layout_alignParentRight="true"
+            android:text="200M"
+            android:textColor="#000000" />
+    </RelativeLayout>
 </FrameLayout>

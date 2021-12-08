@@ -63,16 +63,19 @@ object PositionHelper {
     }
 
     /**
-     * 计算点2相对于点1的角度(x,y暂时无用)
+     * 计算点2相对于点1的角度
      * @param p1 点1
      * @param p2 点2
      */
     fun calcAngleFaceToCamera(p1: Geomtery.Point, p2: Geomtery.Point): Geomtery.Angle {
-        var x = Math.toDegrees(atan2(p2.z - p1.z, p2.y - p1.y).toDouble()).toFloat()
-        var y = Math.toDegrees(atan2(p2.z - p1.z, p2.x - p1.x).toDouble()).toFloat()
-        var z = Math.toDegrees(atan2(abs(p2.y - p1.y), abs(p2.x - p1.x)).toDouble()).toFloat()
-//        if (y < 0) {
-//            z += 90
+        var x = Math.toDegrees(atan2(p2.y - p1.y, p2.z - p1.z).toDouble()).toFloat()
+        var y = Math.toDegrees(atan2(p2.x - p1.x, p2.z - p1.z).toDouble()).toFloat()
+        var z = Math.toDegrees(atan2(p2.x - p1.x, p2.y - p1.y).toDouble()).toFloat()
+
+//        if (((p1.x - p2.x) < 0 && (p1.y - p2.y) < 0) || ((p1.x - p2.x) >= 0 && (p1.y - p2.y) > 0)) {
+//            y += 30
+//        } else {
+//            y -= 30
 //        }
         return Geomtery.Angle(x, y, z)
     }
