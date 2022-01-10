@@ -24,6 +24,14 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
+    android.libraryVariants.all { variant ->
+        variant.outputs.all {
+            String date = new Date().format("yy-MM-dd", TimeZone.getTimeZone("UTC"))
+            outputFileName = "kingoitAr_v${defaultConfig.versionName}_${date}.aar"
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

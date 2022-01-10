@@ -8,6 +8,7 @@ import android.hardware.camera2.*
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.Looper
+import android.os.Message
 import android.view.Surface
 import androidx.core.app.ActivityCompat
 
@@ -31,11 +32,24 @@ import androidx.core.app.ActivityCompat
 class Camera2Helper(private var mContext: Context) {
     private val TAG = "Camera2"
 
+    private val MSG_CLOSE_CAMERA = -1
+
     //得到相机管理器
     private val cameraManager = mContext.getSystemService(Context.CAMERA_SERVICE) as CameraManager
     private var mCameraCharacteristics: CameraCharacteristics? = null
+    private var mCameraDevice: CameraDevice? = null
 
-    private val mHandler = Handler(Looper.getMainLooper())
+    private val mHandler = Handler(Looper.getMainLooper(), object : Handler.Callback {
+        override fun handleMessage(msg: Message): Boolean {
+            when (msg.what) {
+                MSG_CLOSE_CAMERA -> {
+                    mCameraDevice?.close()
+                }
+            }
+            return false
+        }
+    })
+
     private val childHandler: Handler
 
     init {
@@ -98,21 +112,36 @@ class Camera2Helper(private var mContext: Context) {
     }
 
     /**
+     * 关闭相机
+     */
+    fun closeCamera() {
+        mHandler.sendEmptyMessage(MSG_CLOSE_CAMERA)
+    }
+
+    /**
      * 相机的状态监听
      */
     inner class MyStateCallback(private val surface: Surface) : CameraDevice.StateCallback() {
 
         override fun onOpened(camera: CameraDevice) {
+            mCameraDevice = camera;
             //开启预览
             createCameraPreviewSession(camera)
         }
 
         override fun onDisconnected(camera: CameraDevice) {
             camera.close()
+            mCameraDevice = null
         }
 
         override fun onError(camera: CameraDevice, error: Int) {
             camera.close()
+            mCameraDevice = null
+        }
+
+        override fun onClosed(camera: CameraDevice) {
+            super.onClosed(camera)
+            mCameraDevice = null
         }
 
         /**

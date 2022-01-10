@@ -234,4 +234,9 @@ class ArAreaFragment : Fragment() {
         super.onPause()
         glSurfaceView.onPause()
     }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        worldRenderer?.onDestory()
+    }
 }

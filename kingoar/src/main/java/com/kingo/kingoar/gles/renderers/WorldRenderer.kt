@@ -6,7 +6,10 @@ import android.opengl.GLES11Ext
 import android.opengl.GLES20.*
 import android.opengl.Matrix
 import com.kingo.kingoar.R
-import com.kingo.kingoar.gles.helpers.*
+import com.kingo.kingoar.gles.helpers.Camera2Helper
+import com.kingo.kingoar.gles.helpers.MatrixHelper
+import com.kingo.kingoar.gles.helpers.PositionHelper
+import com.kingo.kingoar.gles.helpers.SensorHelper
 import com.kingo.kingoar.gles.listeners.RendererTaskListener
 import com.kingo.kingoar.gles.params.Location
 import com.kingo.kingoar.gles.params.MultiPosition
@@ -249,9 +252,9 @@ class WorldRenderer(
     override fun onDrawFrame(gl: GL10?) {
         super.onDrawFrame(gl)
 
-//        if (isOpenCamera) {
-//            drawCamera()
-//        }
+        if (isOpenCamera) {
+            drawCamera()
+        }
         drawPoint()
         drawDistancePrompt()
 
@@ -383,5 +386,9 @@ class WorldRenderer(
 
     override fun onFrameAvailable(surfaceTexture: SurfaceTexture?) {
         callback.invoke()
+    }
+
+    fun onDestory() {
+        mCamera2Helper.closeCamera()
     }
 }
